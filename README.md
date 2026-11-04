@@ -1,4 +1,4 @@
-# maxVFX Beauty Engine v0.1.0
+# maxVFX Beauty Engine v0.1.2
 
 실시간 카메라/이미지 기반 화사한 뷰티 필터 웹 MVP. **브라우저만으로 실행하는 정적 웹앱**이므로 GitHub Pages에 바로 업로드할 수 있습니다.
 
@@ -12,7 +12,7 @@
 - 모바일 대응 UI, WebGL2 실패 시 기본 색감 Canvas 2D 폴백
 
 ## GitHub Pages 배포
-1. **새 GitHub 공개 저장소**를 만들고 이 폴더 안의 `index.html`, `main.js`, `styles.css`, `assets/` 등을 저장소 **루트**에 업로드합니다.
+1. **새 GitHub 공개 저장소**를 만들고 이 폴더 안의 `index.html`, `main.v0.1.2.js`, `styles.css`, `assets/` 등을 저장소 **루트**에 업로드합니다.
 2. `Settings > Pages > Build and deployment`에서 **Deploy from a branch**, Branch **main**, Folder **/(root)** 선택 후 저장합니다.
 3. Pages 공개 URL(`https://<id>.github.io/<repo>/`)에서 **카메라 시작하기**를 누르고 권한을 허용합니다.
 4. 카메라 권한 문제가 있으면 HTTPS 페이지인지, 브라우저 권한이 허용되어 있는지 확인합니다.
@@ -43,3 +43,9 @@
 5. 조명·얼굴 톤 및 멀티 플랫폼 색 재현
 
 See [docs/HANDOFF.md](docs/HANDOFF.md) and [docs/QA_REPORT.md](docs/QA_REPORT.md).
+
+
+### v0.1.2 업데이트 안내
+- 모바일 사진 보정 확대 오류 방지: 버전별 JS 파일 사용(`main.v0.1.2.js`)으로 기존 브라우저 캐시 무효화
+- 얼굴형 변형 반경 제한 및 비교 슬라이더 위치 수정
+- 배포 후 페이지에 `v0.1.2` 표시를 확인하세요. 이전 버전이면 강력 새로고침하거나 페이지 재접속이 필요합니다.
