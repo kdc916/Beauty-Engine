@@ -5,15 +5,15 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="theme-color" content="#10111a" />
   <meta name="description" content="maxVFX Beauty Engine — 브라우저 실시간 뷰티 카메라" />
-  <title>maxVFX Beauty Engine · v0.1.5</title>
+  <title>maxVFX Beauty Engine · v0.1.6</title>
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="./styles.css?v=0.1.5" />
+  <link rel="stylesheet" href="./styles.css?v=0.1.6" />
 </head>
 <body>
   <div class="app-shell">
     <header class="topbar">
       <a class="brand" href="./" aria-label="maxVFX Beauty Engine"><span class="brand-mark">✦</span><span><b>maxVFX</b><small>BEAUTY ENGINE <em>BETA</em></small></span></a>
-      <div class="top-actions"><span class="version">v0.1.5</span><button id="helpBtn" class="icon-button" aria-label="도움말" title="도움말">?</button></div>
+      <div class="top-actions"><span class="version">v0.1.6</span><button id="helpBtn" class="icon-button" aria-label="도움말" title="도움말">?</button></div>
     </header>
     <main class="workspace">
       <section class="stage-panel" aria-label="카메라 미리보기">
@@ -55,7 +55,7 @@
         <div class="sliders" id="sliders"></div>
         <div class="control-foot"><div class="switch-row"><div><strong>뷰티 필터</strong><small>원본 화면과 언제든 비교할 수 있어요</small></div><label class="switch"><input type="checkbox" id="enabled" checked /><span></span></label></div><div class="button-grid"><button id="savePresetBtn" class="subtle-button">♡ 내 설정 저장</button><button id="exportBtn" class="subtle-button">↥ 설정 내보내기</button></div><div class="button-grid"><button id="importBtn" class="subtle-button">↧ 설정 가져오기</button><button id="comparePanelBtn" class="subtle-button">◐ 원본 비교</button></div></div>
         <div class="mask-qa"><button id="debugMaskBtn" class="subtle-button" aria-pressed="false" type="button">▦ 피부 마스크 확인</button><small>녹색 영역만 피부 보정됩니다. 진단 후 다시 끄세요.</small></div>
-        <div class="info-banner"><b>✦ v0.1.5 Live Preview</b><p>실시간 얼굴 추적에는 MediaPipe 모델이 사용됩니다. 첫 연결 시 모델을 다운로드하며, 네트워크 또는 기기에 따라 기능이 제한될 수 있습니다.</p></div>
+        <div class="info-banner"><b>✦ v0.1.6 Live Preview</b><p>실시간 얼굴 추적에는 MediaPipe 모델이 사용됩니다. 첫 연결 시 모델을 다운로드하며, 네트워크 또는 기기에 따라 기능이 제한될 수 있습니다.</p></div>
       </aside>
     </main>
     <footer class="footer">maxVFX BEAUTY ENGINE <span>© 2026 · Browser Preview</span></footer>
@@ -64,6 +64,6 @@
   <input id="presetInput" type="file" accept="application/json,.json" hidden />
   <dialog id="helpDialog"><div class="dialog-head"><h2>사용 안내</h2><button id="closeHelp" class="icon-button">✕</button></div><p>① 앱이 실행되면 내장 샘플 인물이 자동으로 표시됩니다. 보정 패널 상단의 샘플·카메라·사진 버튼으로 소스를 전환하세요.</p><p>② 모바일에서는 얼굴 프리뷰가 항상 위에 보입니다. 아래 보정 패널만 스크롤하며 프리셋과 슬라이더를 조절하세요.</p><p>③ <b>비교</b> 버튼을 누르고 화면을 좌우로 드래그하면 원본과 보정 결과를 비교할 수 있습니다.</p><p>④ 중앙 셔터로 이미지를 저장하고, 설정을 JSON으로 내보내거나 가져올 수 있습니다.</p><p>※ 모바일 카메라는 HTTPS(GitHub Pages)에서 동작합니다. 얼굴형/눈/메이크업은 얼굴 추적 모델 로딩이 성공하고 얼굴이 감지될 때 적용됩니다. 촬영 영상 자체는 서버로 전송하지 않습니다.</p><button class="primary" id="okHelp">확인</button></dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script type="module" src="./main.v0.1.5.js"></script>
+  <script type="module" src="./main.v0.1.6.js"></script>
 </body>
 </html>
