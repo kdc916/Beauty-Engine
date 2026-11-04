@@ -1,3 +1,12 @@
+## v0.2.0 (2026-11-04)
+- Replaced image-wide single-quad eye/jaw shader deformation with 56×72 triangular inverse-UV mesh.
+- Clipped deformation to MediaPipe 36-point face outline and feathered the outer face boundary.
+- Added mesh foldover detection and attenuation fallback, with 0%-strength identity guarantees.
+- Preserved all v0.1.6 beauty, makeup, photo preview, mobile fixed-stage behavior.
+- Added automated Node tests for 4:5, square and landscape images in mirrored and unmirrored modes.
+- Real mobile GPU/MediaPipe rendering remains unverified in this execution environment.
+- Reference Match / consultation mode still planned, not implemented.
+
 ## v0.1.6 (2026-11-04)
 - Added two-radius skin smoothing and micro-detail reconstruction.
 - Added local under-eye fill based on Face Landmarker positions 145 and 374.
