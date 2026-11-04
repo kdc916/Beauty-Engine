@@ -135,3 +135,6 @@ PC와 모바일 브라우저의 카메라에서 화사한 중국식 뷰티 필�
 - 본 패치는 v0.2.0의 Face Mesh Warp **기초**만 구현. 코·입술 정교 변형, 참조 인물 업로드/Reference Match, Consultation Visualization 미구현.
 - v0.2.1: 본인/참고 이미지 각각 독립 분석, 1인 감지, 포즈/표정 차이 경고. v0.2.2: 부위별 Reference Match/3면 비교.
 - 장기간 실행, 여러 얼굴, 극단 각도 및 경계 이음새는 Android/iOS 기기에서 수동 QA 필요.
+
+### 지속 QA
+- `.github/workflows/qa.yml`: main 푸시/PR마다 Node 22 JS 구문, Mesh Warp 동적 테스트, Python 3.11 회귀 6개 자동 실행하도록 설정. GitHub Actions 워크플로의 실제 첫 실행 성공 여부는 미확인.
