@@ -1,3 +1,9 @@
+## v0.1.5 (2026-11-04)
+- Lip contour / inner-mouth exclusion / feathered cheek masks via GPU makeup texture.
+- Motion-aware smoothing of face landmarks and masks.
+- Three-color QA overlay for skin/lips/cheeks.
+- Preserved mobile pinned-preview layout and sample portrait.
+
 ## v0.1.4 — 2026-11-04
 - Real face-oval skin mask using MediaPipe landmarks (36 contour points)
 - Eyes, brows, lips excluded from smoothing and glow region
