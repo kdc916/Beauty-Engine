@@ -18,6 +18,6 @@ for key,defn in schema['properties'].items():
 assert not ({'faceImage','landmarks','embedding','personName','referenceUrl','sourceUrl'} & set(preset))
 for f in ('docs/ROADMAP.md','docs/REFERENCE_MATCH_DESIGN.md','docs/QA_REFERENCE_MATCH.md'):
   assert (r/f).is_file(),f
-assert 'main.v0.2.5.js' in (r/'index.html').read_text()
-assert 'v0.2.5' in (r/'index.html').read_text()
+assert 'main.v0.9.0.js' in (r/'index.html').read_text()
+assert 'v0.9.0' in (r/'index.html').read_text()
 print('PASS: reference roadmap documents, preset JSON constraints, Reference Match runtime available as experimental 2D mesh matching; surgery preview not implemented')

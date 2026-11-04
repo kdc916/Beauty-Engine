@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {estimateAmbientFromPixels,createAmbientTracker} from '../ambient-light.v0.2.7.mjs';
+import {estimateAmbientFromPixels,createAmbientTracker} from '../ambient-light.v0.9.0.mjs';
 function frame(r,g,b){const a=new Uint8ClampedArray(24*24*4);for(let i=0;i<a.length;i+=4){a[i]=r;a[i+1]=g;a[i+2]=b;a[i+3]=255;}return a;}
 test('dark scene receives positive capped fill, no overexposure',()=>{const v=estimateAmbientFromPixels(frame(45,42,40),24,24);assert.ok(v.shadow>0&&v.shadow<=.20);assert.ok(v.warmth<=.28);});
 test('bright scene reduces or disables extra fill',()=>{const v=estimateAmbientFromPixels(frame(220,218,216),24,24);assert.ok(v.shadow<=0);});

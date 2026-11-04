@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createLiveTransition,LIVE_TRANSITION} from '../live-transition.v0.3.1.mjs';
+import {createLiveTransition,LIVE_TRANSITION} from '../live-transition.v0.9.0.mjs';
 test('filter fades in from zero without one-frame appearance pop',()=>{
   const g=createLiveTransition();assert.equal(g.step(0,1),0);
   const a=g.step(16,1);assert.ok(a>0&&a<.2);

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {lightFieldTarget,createLightFieldTracker} from '../face-light-field.v0.3.1.mjs';
+import {lightFieldTarget,createLightFieldTracker} from '../face-light-field.v0.9.0.mjs';
 const env={shadow:.6,direction:.8,warmth:.3};
 const pose={yaw:0,pitch:0,quality:1};
 test('without a valid face, 3D light is disabled',()=>{

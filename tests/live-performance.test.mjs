@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {LIVE_PROFILES, createLivePerformanceController, getLiveResolution} from '../live-performance.v0.2.7.mjs';
+import {LIVE_PROFILES, createLivePerformanceController, getLiveResolution} from '../live-performance.v0.9.0.mjs';
 
 function simulate(controller,{durationMs,renderGapMs,renderCostMs,detectCostMs=25,startAt=0}){
   for(let t=startAt;t<=startAt+durationMs;t+=renderGapMs){

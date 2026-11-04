@@ -110,3 +110,47 @@
 .live-quality select{background:#312635;color:#fff0f6;border:1px solid #a878986b;border-radius:9px;padding:10px 8px;font-size:11px;min-width:0;width:100%;cursor:pointer}
 .live-quality select:focus-visible{outline:2px solid #ffc0d8;outline-offset:2px}
 @media(max-width:370px){.live-quality{grid-template-columns:1fr}.live-quality select{width:100%}}
+
+/* v0.2.6: pinned preview and isolated controls stay intact on mobile */
+.light-control,.look-library{margin:10px 0 16px;padding:13px;border:1px solid #ffffff20;background:#241d2a;border-radius:14px;min-width:0}
+.light-control>p,.look-library>p{font-size:11px;color:#bcb0c4;line-height:1.6}
+.light-row{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#eedce9;font-size:12px}
+.light-row label{display:flex;align-items:center;gap:5px}
+.light-control input[type="range"]{width:100%;accent-color:#eea9c9;margin-top:10px}
+.look-library>strong{color:#f3c4d8;font-size:12px}.look-row{display:flex;gap:6px;margin-top:9px;min-width:0}
+.look-row>input,.look-row>select{background:#15131b;color:#fff;border:1px solid #6b536b;border-radius:8px;min-width:0;flex:1;padding:9px;font-size:12px}
+.look-row>button,.look-buttons>button{background:#55374b;border:1px solid #8e6c83;color:#fff;border-radius:8px;padding:9px;font-size:11px;min-width:0}
+.look-buttons{display:grid;grid-template-columns:1fr 1fr 62px;gap:6px;margin:9px 0}
+.look-library small{color:#ab9cae;font-size:10px;line-height:1.5;display:block}
+
+/* v0.2.7: compact live pose status; remains inside the independently scrollable controls. */
+.pose-status{font-size:11px;line-height:1.5;color:#e7c5db;margin:7px 0 9px;padding:8px 10px;background:#241d2a;border:1px solid #c595ad35;border-radius:8px}
+.pose-control{font-size:11px;display:flex;align-items:center;gap:8px;color:#f3dcea;min-height:34px;cursor:pointer}
+.pose-control input{accent-color:#efb1d6;width:16px;height:16px}
+
+/* v0.2.8 keeps the mobile pinned preview; occlusion and exposure smoothing are runtime-only. */
+
+/* v0.2.9: opt-in semantic occlusion classification under the pinned preview */
+.semantic-occlusion{margin:10px 0 14px;padding:13px 14px;border:1px solid #9568a371;background:#221c2b;border-radius:14px;display:grid;gap:9px}
+.semantic-occlusion .semantic-row{display:flex;align-items:center;justify-content:space-between;gap:9px;color:#f1dae8;font-size:12px}
+.semantic-occlusion .semantic-row label{font-size:11px;white-space:nowrap;display:flex;align-items:center;gap:5px}
+.semantic-occlusion input{accent-color:#ec9eca}
+.semantic-occlusion small{color:#baaaba;line-height:1.6;font-size:10px}
+#semanticOcclusionStatus{color:#e7b4d5;font-size:10px;line-height:1.4}
+
+/* v0.3.0 explanatory note for optional relighting */
+.v030-explainer{display:block;padding:2px 6px 9px;font-size:10px;color:#b9abbe;line-height:1.55}
+
+/* v0.9.0 integrated sculpt, studio light & diagnostics; match existing dark palette. */
+.v090-sculpt,.v090-studio,.v090-diagnostics{padding:15px 16px;border-radius:14px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.10);margin:10px 0 14px;}
+.v090-sculpt small,.v090-studio small,.v090-diagnostics small{display:block;line-height:1.65;color:var(--muted,#a6a6b3);margin:7px 0;}
+.v090-diagnostics summary{cursor:pointer;font-size:13px;font-weight:700;}
+.v090-diagnostics pre{white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;color:#dadde7;}
+.v090-studio input[type=range]{display:block;width:100%;accent-color:#d3a6ff;margin:8px 0 15px;}
+.look-library textarea#lookShareFallback{display:block;width:100%;font-size:12px;resize:vertical;min-height:55px;}
+.look-library textarea#lookShareFallback[hidden]{display:none;}
+@media(max-width:600px){.v090-sculpt,.v090-studio,.v090-diagnostics{padding:13px 12px;}}
+
+.v090-studio-presets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:10px 0;}
+.v090-studio-presets button{font-size:12px;color:inherit;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;cursor:pointer;padding:8px 5px;}
+.v090-studio-presets button:active{transform:scale(.98)}

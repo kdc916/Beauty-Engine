@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {poseFromMatrix,poseFromLandmarks,estimateFacePose,createFacePoseTracker,poseLightingUniform} from '../face-pose.v0.2.7.mjs';
-import {createLook,normalizeLook,createLookStore} from '../look-presets.v0.2.7.mjs';
+import {poseFromMatrix,poseFromLandmarks,estimateFacePose,createFacePoseTracker,poseLightingUniform} from '../face-pose.v0.9.0.mjs';
+import {createLook,normalizeLook,createLookStore} from '../look-presets.v0.9.0.mjs';
 function yawMatrix(deg){
   const a=deg*Math.PI/180,c=Math.cos(a),s=Math.sin(a);
   return {rows:4,columns:4,data:[c,0,s,0, 0,1,0,0, -s,0,c,0, 0,0,0,1]};

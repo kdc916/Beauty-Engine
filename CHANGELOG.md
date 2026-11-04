@@ -1,3 +1,69 @@
+# CHANGELOG — v0.9.0 통합 릴리스
+
+## 2026-11-04 · v0.9.0
+
+- v0.3.1 이후 예정된 고급 커스터마이징 기능을 분리 출시 없이 통합 베타로 패키징.
+- `face-sculpt.v0.9.0.mjs` (pure inverse UV, 6-region bounded warps) 추가. 외곽 감쇠/품질 제한/라이브 턱·볼 비활성.
+- 사진용 미형 상세 6개 슬라이더 + 라이브 옵트인 BETA + 안전 신뢰도 적용.
+- 셰이더에 `uStudioLight` 가상 보조광 추가 및 UI 4개 조명 프리셋.
+- `look-presets.v0.9.0.mjs`: 세부 얼굴 파라미터·스튜디오 라이트·라이브 모드 설정 저장. 이전 JSON 읽기 호환.
+- `look-links.v0.9.0.mjs`: UTF-8 base64url 해시 기반 설정 링크 공유/불러오기. 길이/형식 검증 및 사진/랜드마크 배제.
+- 전후 비교 PNG 내보내기, LIVE QA 요약 정보 패널.
+- 변경된 모듈: 최신 v0.9.0 엔트리/imports, CSS 캐시 갱신, GitHub Actions 최신 파일 검사, 단위·통합 회귀 테스트.
+- **제외·미검증:** 완전 3D 얼굴/측면·완전 가림 추적/물리 광원 복원/모바일 실기기 성능.
+
+---
+
+# v0.3.1 — Live Pose Continuity & GPU Safety
+
+## v0.3.1 — 포즈 연속성·마스크 정렬·GPU 메시 업로드 최적화 (2026-11-04)
+- **Pose Continuity**: 3개 이상 안정 프레임 확인 후 얼굴 변형을 서서히 복구. 급격한 회전·포즈 추정 누락 때 즉각 신뢰도 감쇠. 2D fallback은 낮은 확신도로 제한.
+- **조명 신뢰도**: 포즈 신뢰도 감소 시 3D 근사 조명 신뢰도도 함께 감쇠. 실제 3D 복원·광원 위치 추적은 아님.
+- **Matte Alignment**: 코뿐 아니라 양쪽 눈 중심·너비·기울기 확인. 옛 마스크가 회전한 얼굴의 잘못된 위치에 붙는 상황 억제.
+- **GPU/CPU**: 메시 변형 강도가 0이고 이미 항등 UV가 업로드된 상태면 불필요한 4,161-정점 재계산/버퍼 업로드 생략. 변형 필요 시 즉시 갱신.
+- **보안/개인정보**: 얼굴 데이터·사진 추가 저장 및 네트워크 전송 기능 없음. 프리셋 구조 및 사진 공유 기존 방식 유지.
+- **중요**: 실제 모바일 GPU 장시간 출력·조명 화질·측면 가림·턱선 품질은 실기기 QA 필요. 자동 테스트는 이 효과를 입증하지 못함.
+
+## v0.3.0 (2026-11-04)
+- Added optional pose-guided ellipsoidal face relighting BETA, confined to face-skin and exposure-safe range.
+- Added a directional lighting field with confidence and temporal rate limits, and a toggle saved in My Look presets.
+- Added temporal semantic-occlusion matte: fast protection, slower release, 1px occluder edge guard, reset on tracking displacement/size/source changes.
+- Added render-time semantic matte alignment validation to prevent applying a stale mask after head movement.
+- Maintained legacy v0.2.9 Live Safe, Face Mesh, Photo/Reference Match, PNG and JSON exports, mobile preview behavior.
+- Real mobile WebGL2/MediaPipe output and measured performance remain unverified.
+
+## v0.2.9 — 2026-11-04
+- Added opt-in MediaPipe SelfieMulticlass pixel segmentation for background, hair, body skin, face skin, clothing, and accessories.
+- Added conservative preservation matte sampled at unwarped image coordinates (WebGL2 TEXTURE3) to avoid pulling occluding pixels with the face mesh.
+- Added independent semantic segmentation worker-like controller (synchronous inference currently; rate-limited to reduce UI-thread load), model lazy loading, CPU delegate, stale mask / invalid face quality fallback, error handling and input generation cancellation.
+- Added on/off and explicit status panel, GPU context restoration support, versioned modules, and deterministic mock inference + pixel mask tests.
+- Kept existing live pose, exposure smoothing, reference match, look library, mobile pinned preview and original-image fallback. No repository upload performed.
+- Caveat: class labels approximate hand/hair occlusion; true hand segmentation and actual mobile GPU acceptance remain unverified.
+
+## v0.2.8 (2026-11-04)
+- Added median-consensus landmark anomaly guard with bounded isolated-point repair and multiple-region fail-close behavior.
+- Added time-based quality envelope for live eyes/skin/makeup/pose-light intensity; stale face retained no longer than 310ms.
+- Added yaw/pitch pose attenuation in 2D fallback as well as matrix-based tracking.
+- Added per-frame change limiting to scene brightness/warmth/directional light estimate to reduce exposure flicker.
+- Preserved previous local Look presets, fixed preview, reference matching, shaders, adaptive performance and original fallback.
+- All changes distributed as full ZIP; **GitHub not changed by this release**. Mobile WebGL2 and physical occlusion classification remain unverified/not implemented.
+
+## v0.2.7 — 2026-11-04
+- MediaPipe optional facial transformation matrix for rough yaw/pitch/roll (with 2D landmark fallback and validated matrix basis).
+- New face-pose.v0.2.7.mjs: orientation validation, smoothing, sudden-jump rejection, stale-state clearing, confidence falloff on large turns.
+- GPU WebGL2 fragment shader: conservatively bounded face-mask-only pose-aware lighting proxy, coupled to scene ambient direction. This is NOT calibrated 3D relighting.
+- Mobile face-pose status and per-look `poseAware` ON/OFF; existing saved JSON look schema remains backward compatible.
+- MediaPipe GPU/CPU and matrix-on/off fallbacks to avoid losing existing 2D face tracking on unsupported devices.
+- Existing occlusion, chin UV safety, Reference Match, pinned preview, adaptive performance and sharing maintained.
+- 44 Node tests + 12 Python static regressions passed. Real mobile/WebGL2 execution remains unverified: Chromium blocked by security policy.
+- No GitHub mutations. Full root-layout ZIP for manual upload.
+
+## v0.2.6 (2026-11-04)
+- Added 2D scene-adaptive ambient brightness/warmth/left-right illumination proxy for skin.
+- Added named My Look settings store, import/export/share, and explicit corrected PNG sharing.
+- Added short occlusion hold (<130ms) with conservative original fallback; no full occlusion tracking guarantee.
+- Updated GitHub Actions and source tests; no repo commit made.
+
 ## v0.2.5 (2026-11-04) — Adaptive Live Performance / Stability
 - Added adaptive live profile controller with user-selectable Auto, Quality, Balanced, Performance and Battery options.
 - Added frame pacing, performance-based camera resolution selection and tier-aware face/mask intervals; adaptation includes hysteresis and a cooldown.

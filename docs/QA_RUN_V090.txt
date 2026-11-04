@@ -1,0 +1,9 @@
+maxVFX Beauty Engine v0.9.0 - automated QA, 2026-11-04
+GitHub push/deploy: NOT PERFORMED
+Browser live QA: NOT VERIFIED - localhost ERR_BLOCKED_BY_ADMINISTRATOR
+JS syntax: 120/120 PASS
+Node dynamic: 106/106 PASS
+Python integration regressions: 17/17 PASS
+HTML IDs unique: 91, JS DOM bindings: OK, direct main module imports: 16/16 PASS
+Active transitive ES-module imports: 20 files verified
+v0.9.0 function wiring, safe live sculpt and image comparison: PASS

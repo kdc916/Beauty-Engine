@@ -5,7 +5,7 @@ import hashlib, re, struct
 
 root=Path(__file__).resolve().parent
 html=(root/'index.html').read_text(encoding='utf-8')
-js=(root/'main.v0.2.5.js').read_text(encoding='utf-8')
+js=(root/'main.v0.9.0.js').read_text(encoding='utf-8')
 css=(root/'styles.css').read_text(encoding='utf-8')
 portrait=(root/'assets/sample-portrait.webp').read_bytes()
 
@@ -19,8 +19,8 @@ p=IDs();p.feed(html)
 assert len(p.ids)==len(set(p.ids)), 'Duplicate HTML IDs'
 for id_ in ('stage','glCanvas','fallbackCanvas','sampleControlBtn','cameraBtn','uploadBtn','compareBtn','presets','sliders'):
     assert id_ in p.ids,id_
-assert 'src="./main.v0.2.5.js"' in html
-assert 'href="./styles.css?v=0.2.5"' in html
+assert 'src="./main.v0.9.0.js"' in html
+assert 'href="./styles.css?v=0.9.0"' in html
 assert "loadBundledSample();" in js, 'default sample activation missing'
 assert 'new URL(\'./assets/sample-portrait.webp\',import.meta.url)' in js
 assert "state.mode='sample'" in js

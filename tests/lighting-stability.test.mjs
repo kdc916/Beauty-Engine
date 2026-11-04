@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createLightStabilizer,estimateAmbientFromPixels,createAmbientTracker} from '../ambient-light.v0.3.1.mjs';
+import {createLightStabilizer,estimateAmbientFromPixels,createAmbientTracker} from '../ambient-light.v0.9.0.mjs';
 test('one-frame lighting spike is capped to prevent visible flicker',()=>{
   const filter=createLightStabilizer({alpha:1});
   const a=filter.update({brightness:1,shadow:.2,warmth:.28,direction:.4});

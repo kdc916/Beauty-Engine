@@ -2,10 +2,10 @@
 from pathlib import Path
 import re
 root=Path(__file__).resolve().parent
-src=(root/'main.v0.2.5.js').read_text()
+src=(root/'main.v0.9.0.js').read_text()
 html=(root/'index.html').read_text()
 css=(root/'styles.css').read_text()
-assert 'main.v0.2.5.js' in html and 'debugMaskBtn' in html
+assert 'main.v0.9.0.js' in html and 'debugMaskBtn' in html
 assert '.mask-qa' in css
 for needle in ['const FACE_OVAL=','const LEFT_EYE=','const RIGHT_EYE=','const LEFT_BROW=','const RIGHT_BROW=','const OUTER_LIPS=','function rasterizeSkinMask(points)','function uploadMaskTexture()','uniform sampler2D uSkinMask;','texture(uSkinMask,src).r','texture(uSkinMask,toneUV).r','if(epoch!==sourceGeneration)return;','function invalidate()',"if(t-lastMetric>=1200)"]:
     assert needle in src,needle

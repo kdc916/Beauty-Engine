@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {buildReferenceMatch,referenceWarpPoint,DEFAULT_MATCH_CONFIG} from '../reference-match.v0.2.5.mjs';
-import {createWarpGrid,updateWarpGrid,FACE_OUTLINE_IDS} from '../mesh-warp.v0.2.5.mjs';
+import {buildReferenceMatch,referenceWarpPoint,DEFAULT_MATCH_CONFIG} from '../reference-match.v0.9.0.mjs';
+import {createWarpGrid,updateWarpGrid,FACE_OUTLINE_IDS} from '../mesh-warp.v0.9.0.mjs';
 
 function sampleFace(variant=0){
   const pts=Array.from({length:478},()=>({x:.50,y:.52}));

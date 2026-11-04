@@ -1,5 +1,32 @@
 # maxVFX Beauty Engine — 누적 인수인계
 
+## v0.3.0 — 포즈 기반 3D 음영 근사 / Temporal Occlusion Matte (2026-11-04)
+### 적용 범위
+1. `main.v0.3.0.js`: 신규 GPU uniform `uLightField`/`uRelight3D`, 피부 전용 약한 타원체 음영, 얼굴 회전 신뢰도 연동 및 relight3D 사용자 설정/저장/복구.
+2. `face-light-field.v0.3.0.mjs`: 환경 밝기·화면 좌우 방향과 MediaPipe 포즈로 보수적인 광향/강도/신뢰도 예측, 250ms 시간 필터와 순간 변화 제한.
+3. `semantic-temporal.v0.3.0.mjs`: 분할 마스크의 가림 보호 진입/해제 속도 분리, 경계 1px 여유, 얼굴 이동·해상도 변경·모드 전환·재초기화 시 이전 마스크 폐기.
+4. `semantic-occlusion-runtime.v0.3.0.mjs`: 기존 선택형 모델 추론 결과를 temporal 필터로 처리, 최신 코 좌표 기록 및 비정상 결과의 stale matte 폐기.
+5. `main.v0.3.0.js`: 분할 모델과 얼굴 추적 간 코 좌표 차가 0.026(normalized 좌표) 이상일 때 오래된 보호 마스크 합성을 정지.
+6. `look-presets.v0.3.0.mjs`: 선택형 `lighting.relight3D` 프리셋 저장·공유. 기존 룩 파일은 기본 OFF로 복원.
+7. `index.html`, `styles.css`: 하단 조명 패널 옵션, 고정 모바일 프리뷰 레이아웃 유지.
+
+### QA
+- Node 86 동적 테스트 PASS (기존 72 + 신규 14); Python 15개 PASS. JS 구문 및 HTML/모듈 ID 검사 PASS.
+- headless Chromium은 `net::ERR_BLOCKED_BY_ADMINISTRATOR`로 localhost 페이지 접근 불가. **GPU 렌더 출력, 실제 조명 색감, Android/iOS 세그멘테이션 품질·FPS·발열은 미검증.**
+- 자동 QA는 코드 무결성과 수학 동작만 검증. 사용자 제공 실기기 캡처와 기기별 FPS 측정 필수.
+
+### 알려진 한계
+- Face mesh는 2D 변형이며 개인별 3D 얼굴 형상 복원이나 물리광 트래킹이 아님.
+- 손이나 머리카락을 별도 물체로 추적하지 않고 의미론적 모델 클래스 기반. 완전한 얼굴 가림을 추적하지 않음.
+- **안전상 라이브 턱선 변형은 비활성화된 상태.** 실제 기기 GPU 아티팩트 검증 이후 제한적으로 재검토.
+- 새 조명 모드 기본 OFF. 이전 My Look과 레거시 저장 데이터에서 자동으로 켜지지 않음.
+
+### 다음 작업 (v0.3.1)
+- 실제 Android/iOS GPU 스크린샷·FPS 프로파일링 기반 셰이더 최적화, Face Mesh 시각 QA, 측면 얼굴 occlusion alignment.
+- 필요한 경우 optical flow / pixel motion compensation 검토 및 얼굴 피부 범위 라이트 히스토그램 고도화.
+
+---
+
 ## v0.1.1 / 2026-11-04
 
 ### 목표
@@ -258,3 +285,170 @@ Pages: https://kdc916.github.io/Beauty-Engine/ (외부 배포 상태는 별도 �
 ### 이어받기 / 다음 단계
 - v0.2.5의 자동 설정은 실측값 기반 정책이지만 기기별 FPS 개선/발열 절감 정도를 확인한 것은 아님. 갤럭시/샤오미/아이폰에서 실기기 5–10분 QA 후 경계값 조정.
 - 다음 v0.2.6: 실제 기기 성능 로그 수집(개인정보 없는 프레임 지연/계측), 카메라 장시간 품질·발열, 위험 시 원본 복귀 페이드 연출, A/B 레퍼런스 UI를 검토.
+
+
+## v0.2.6 — Adaptive Light + My Look Library + Live Occlusion Recovery
+- **환경 라이트 1차(BETA):** 저해상도 24×24 영상 샘플에서 평균 밝기/대략적 색온도 및 좌우 밝기 차이를 추정합니다. 280ms 샘플·EMA 평활화, 피부 마스크 내부에만 매우 약한 밝기/색상 보정을 반영합니다. 실시간 조명 재현의 연구 단계로, 3D 법선·그림자·반사·실제 조도 측정이나 재조명 SDK는 아닙니다.
+- **My Look Library:** 보정 12개 파라미터, 자동 조명 토글/강도, Reference Match 강도 설정을 이름으로 로컬에 최대 16개 저장/불러오기/삭제합니다. JSON 파일로 내보내기 및 모바일 Web Share API로 공유하며, 미지원 시 JSON 다운로드합니다.
+- **보정된 얼굴 이미지 저장/공유:** PNG 스냅샷(원본 비교선이 켜져도 보정 영역만 출력)을 명시적인 사용자 조작으로 저장·공유합니다.
+- **개인정보 보호:** 룩 JSON은 이미지·랜드마크·얼굴 임베딩·인물 식별 정보가 없으며, 다른 기기에서 동일한 Reference Match를 재현하려면 참고 사진을 별도로 다시 등록해야 합니다. PNG에는 선택한 사용자의 실제 얼굴 이미지가 포함됩니다.
+- **가림/회전 안전 처리:** 급격한 방향/가림 의심 좌표 및 좌표 튐을 감지하고 약 130ms의 일시 유지 후 안전하게 원본으로 복귀합니다. 재인식은 연속으로 안정된 추적 결과를 요구합니다. 완전 가림 후의 위치를 정확히 예측하거나 무제한 유지하지 않습니다.
+- 기존 v0.2.5 성능 자동 조절·얼굴 메시 보호·모바일 고정 프리뷰·샘플 인물·2D Reference Match 유지.
+
+### 현재 제한 및 다음 목표
+1. 진짜 **조명 추적**: 3D 얼굴 형상/법선 추정, 환경 조명 SH/카메라 노출·화이트밸런스, 측면/강한 역광 대응, 기기별 색 관리.
+2. **지속적인 얼굴 변형**: 회전/부분 가림에 견디는 3D Face Model + optical flow + face-identity reacquisition (현재는 짧은 유예/안전 정지).
+3. **게임 캐릭터처럼 커스터마이징**: 코·입·눈·턱·볼·피부/메이크업·LUT·조명의 파라미터 라이브러리와 얼굴별 재타기팅.
+4. **외형 보존용 개인 얼굴 프로필**: 사진/기하 정보를 개인 로컬 저장하려면 별도 암호화와 사용자 동의/삭제/공유 권한 관리 설계 필요. 현재 JSON은 설정 프리셋이며 개인 얼굴 형상 자체를 저장하지 않습니다.
+5. **실기기 QA**: Android Chrome/Samsung Internet, iOS Safari, 저조도/역광/고개 45° 회전/눈과 입 가림/얼굴 완전 가림 및 프리셋 공유·모바일 파일 저장.
+
+### QA
+- Node.js 동적 테스트 35개 통과(기존 Warp·Reference·성능 + 조명 통계·공유 룩·가림 유예).
+- Python 정적 회귀 11개 통과.
+- JS syntax/HTML 리소스 참조/ZIP 테스트는 아래 QA_RUN_V026.txt 참조.
+- **실제 카메라 GPU·MediaPipe 실기기 기능은 본 환경에서 검증하지 못했습니다. 성능/FPS/발열 및 모든 상황 무결성은 보장하지 않습니다.**
+
+## v0.2.7 — 얼굴 3D 포즈·조명 연동 기반 (2026-11-04)
+
+### 사용자 요청·제품 목표
+- 고개 회전/부분 가림에서도 안정적인 얼굴 보정, 주변 광원에 따른 자연스러운 피부 조명, 게임 캐릭터 같은 룩 커스터마이징, 프리셋 저장·공유.
+- 이번 단계는 **3D 얼굴 방향 추정 + 환경 조명 연동 BETA**이며 추후 광원/표면/오클루전 고도화의 기반이다.
+
+### 변경 파일
+- 신규 `face-pose.v0.2.7.mjs`: MediaPipe `Matrix{rows:4,columns:4,data[16]}` 행렬 검증 및 yaw/pitch/roll 추정, 대체 2D 랜드마크 추정, EMA 스무딩, 급격한 회전 거부, 포즈 신뢰도 감소, 전원 OFF 시 영(0) uniform.
+- `main.v0.2.7.js`: `outputFacialTransformationMatrixes` GPU→CPU+행렬 미지원 폴백, 추적 결과 포즈 상태 업데이트, Live Safe와 결합, 포즈 연동 셰이더 `uFacePose`·`uPoseAwareLight` 연결, 상태 정보 및 사용자 설정 저장/복원.
+- `look-presets.v0.2.7.mjs`: `lighting.poseAware` 속성 추가(기존 프리셋 기본 true로 마이그레이션), 사진/랜드마크는 저장하지 않음.
+- `index.html`, `styles.css`: 얼굴 방향 상태·포즈 연동 조명 스위치. 기존 모바일 고정 프리뷰 유지.
+- `tests/face-pose.test.mjs`, `tests_v027_integration.py`: 매트릭스·폴백·회전·신뢰도·손실 후 리셋·프리셋 JSON 호환성 자동 검증.
+- `.github/workflows/qa.yml`: 사용자가 직접 GitHub에 업로드한 뒤 v0.2.7 테스트가 돌도록 수정(이번 작업 중 실제 워크플로는 실행하지 않음).
+
+### 알고리즘 및 보호 장치
+1. 1인 Face Landmarker 3D 변환행렬 16개 원소(가능한 기기) 입력.
+2. 행렬의 기저 벡터 길이·직교성·정면 성분 검사 후 yaw/pitch/roll 도출. 미지원/이상치면 2D 랜드마크 프록시 사용(낮은 confidence).
+3. 프레임 간 유효 시간 필터, 36° 초과 급변 거부, 오래된 상태 즉시 무효화.
+4. 조명 보정은 기존 저해상도 카메라 좌우 밝기 추정과 얼굴 방향을 결합해 피부 마스크 내부에서만 **약 ±5% 이내**로 조절하고 밝은 영역을 보호.
+5. 회전 시 스무딩/얼굴 효과 신뢰도를 줄이되, 부분 가림을 완전한 3D 복원이라고 주장하지 않음. Live Safe 약 130ms 유지/안전한 원본 복귀는 종전과 동일.
+6. 사용자 설정 My Look JSON의 조명 스위치만 저장/공유. 실제 사람 얼굴/이미지, 생체 좌표는 저장되지 않음.
+
+### QA
+- Node 동적 테스트: 44 PASS (포즈 9개 추가), Python 정적 회귀: 12 PASS.
+- JS 구문/HTML ID/모듈 경로, ZIP 중복/CRC 검증 별도.
+- 실제 WebGL2/MediaPipe 앱 렌더링 및 Android/iOS 카메라 QA는 불가(Chromium `ERR_BLOCKED_BY_ADMINISTRATOR`).
+- **릴리스 한계:** 실제 3D 광원 추적/렌더링, 완전한 회전/가림 상태 추적, 프리셋만으로 특정 인물 얼굴 형상 재현은 구현되지 않음.
+
+### 다음 개발 v0.2.8 우선순위
+1. 실기기 측정 기반 yaw/pitch/roll 좌표축 캘리브레이션, 미러/세로 비율/측면 QA.
+2. 부분 가림 검출 분할 마스크 및 머리카락/손/안경 보호, 라이브 잔상 방지.
+3. 얼굴 구간별 노멀/조명 추정 정확도 향상 및 temporal flicker 방지, 발열 테스트.
+4. 개인별 얼굴 Shape Profile 저장은 개인정보/프라이버시 보호 설계와 3D 메시 QA 확정 후 진행.
+
+### 참고 문서
+- MediaPipe Face Landmarker Web: https://developers.google.com/edge/mediapipe/solutions/vision/face_landmarker/web_js
+- Face Geometry: https://developers.googleblog.com/mediapipe-3d-face-transform/
+- 상세: `docs/POSE_LIGHTING_V027.md`, `docs/QA_RUN_V027.txt`
+
+
+## v0.2.8 — 부분 가림 이상값 보호 + 시간 기반 복귀 + 조명 안정화 (2026-11-04)
+
+### 사용자 요구/범위
+- 고개 회전, 손·머리카락 일부 가림, 순간 추적 오류에서 라이브 메시/피부/조명 점프를 억제. 기존 룩 저장·공유와 모바일 프리뷰 유지.
+- 이 버전은 **부분 가림 segmentation이나 가려진 얼굴의 정확한 복원 기술이 아님**. 랜드마크 입력 이상값과 포즈 안전 장치를 추가함.
+
+### 신규 파일/수정
+- `occlusion-guard.v0.2.8.mjs`: 9개 얼굴 핵심 앵커 이동 중앙값, 478점 좌표 유효성 검사, 일부 이상점에 한해 과거 검증 좌표+평행이동으로 짧게 수리. 여러 핵심점이 동시 불안정/240ms 초과하면 수리 중단. `poseSafetyMultiplier`로 큰 yaw/pitch 변형 약화.
+- `live-transition.v0.2.8.mjs`: FPS 독립의 exponential attack/release. 170ms attack/115ms release, 최대 310ms 지난 얼굴 메시는 폐기.
+- `ambient-light.v0.2.8.mjs`: 밝기·그림자·색온도·좌우광 추정값 변화 제한으로 순간 화이트밸런스/노출 깜빡임 억제.
+- `main.v0.2.8.js`: 기존 VIDEO 추적 뒤 Occlusion Guard → Live Face Filter → Face Pose 순서 연결. 마스크 및 Warp에는 검증된 좌표만 전달. `uFaceQuality`·라이브 눈 Warp·`uPoseAwareLight`와 품질 fade 연결. 추적 안전 상태 텍스트.
+- `index.html`은 v0.2.8 모듈을 가리키도록 변경; v0.2.7와 다른 캐시 URL.
+- `face-pose`, `mesh-warp`, `reference-match`, `reference-panel`, `live-performance`, `live-safety`, `look-presets` 모듈은 같은 동작을 유지하면서 실행 버전 경로만 분리.
+- `.github/workflows/qa.yml`, `tests_*.py`가 v0.2.8을 검사하도록 수정. Node 테스트 파일 3개 추가.
+
+### 안전 정책 및 잔여 리스크
+- 위·아래/측면 대각도에서 식별 불확실성이 커지면 Warp 강도가 줄어든다. 실제 얼굴 전체 가림 시 지속 추적은 불가능하며 원본 복귀가 설계상 올바른 동작.
+- MediaPipe 자체가 부정확한 좌표를 '일관되게' 여러 프레임 내보내는 경우 통계적 필터만으로 검출 불가. 실제 픽셀 손/머리 segmentation, 3D 얼굴 보간과 confidence 기반 occlusion은 후속 과제.
+- 라이브 턱 변형은 안전을 위해 여전히 비활성; 완전한 게임 캐릭터식 변형 유지 불가. 프리셋은 얼굴 구조/개인사진이 아닌 효과 파라미터만 포함.
+- 로컬 Node 및 Python 회귀 검사 통과. 실제 모바일 WebGL2·MediaPipe·발열·장시간 오클루전/측면 결과는 미검증.
+
+### 다음 작업
+1. 실기기 영상 QA 기록: 0°/30°/45°/60° 회전, 손으로 한쪽 눈 가림, 입/코 부분 가림, 안경/머리카락, 완전 가림 후 재진입.
+2. 추적 품질·FPS 로그(이미지/좌표 제외)를 수집해 보정 수치 튜닝; Android/iOS 기종별 비교.
+3. 실제 픽셀 기반 손·머리카락 segmentation, 3D Face Mesh/Optical Flow 및 occlusion-aware blending 탐색.
+4. Reference Match의 위치/표정 일관성, 피부 마스크 경계 및 카메라 실시간 턱선 Warp(현재 비활성)를 별도 기기 QA 후 재검토.
+5. 기존 사용자 정책: **GitHub에 직접 커밋하지 말고, 전체 ZIP + 누적 HANDOFF MD만 전달.**
+
+
+## v0.2.9 — 의미론적 가림 마스크 및 원본 픽셀 보호 (2026-11-04)
+
+### 신규
+- `semantic-occlusion.v0.2.9.mjs`: 6개 category index 처리, 원본 보호 마스크, 검증/연결 규격, 생성 번호 교체와 영상 950ms 유효기간.
+- `semantic-occlusion-runtime.v0.2.9.mjs`: MediaPipe ImageSegmenter 선택적 CPU delegate, 사진/비디오 모드 전환, 420~820ms rate limit, 잘못된 결과 폐기, WASM 마스크 메모리 해제, 실제 추론 비용 추적.
+- `main.v0.2.9.js`: WebGL2 TEXTURE3 입력, `uSemanticMask`/`uSemanticEnabled`, 수정되지 않은 출력 픽셀(`p`) 기준으로 보호 영역을 원본 영상과 합성; 모델 실패 시 기존 Live Safe / 2D 폴백.
+- `index.html`/`styles.css`: 가림 AI 보호 ON/OFF와 처리 상태; 기본값 OFF, 모바일 상단 프리뷰/하단 스크롤 유지.
+
+### 데이터·라이브사이클
+- 카메라/사진 소스 전환 시 이전 분할 결과 무효화, 모델이 비정상이거나 신뢰할 수 없는 출력을 내면 즉시 비활성 프레임 처리.
+- 사진·얼굴 좌표·분할 RGB 데이터는 저장하지 않음. 모델·WASM만 외부 CDN/Google에서 가져오며 별도의 이미지 업로드 경로를 구현하지 않음.
+- 룩 프리셋/내보낸 JSON에는 새 마스크 데이터가 없고, 가림 보호 ON/OFF는 **해당 장치** 일반 설정으로만 유지.
+
+### 안정성·기술 부채
+- 세그먼터 `segment()`/`segmentForVideo()`는 현재 UI 스레드에서 동기 실행하는 방식이므로 모바일 GPU/CPU 부하가 증가할 수 있음. 420–820ms 간격 제한/자동 화질 감속 지원. Web Worker+OffscreenCanvas 이동은 후속 연구.
+- iOS Safari GPU delegate의 분할 레이블 혼동 보고를 고려해 CPU delegate 사용. 실제 Safari CPU 동작은 반드시 현장 검증.
+- 머리카락/손을 직접 픽셀별 확실하게 판별하지 못함(6-class의 body-skin/others 근사). 깊은 각도 회전·완전 가림에도 추적이 계속된다고 주장하면 안 됨.
+- 가림 마스크는 필터 합성 보호용이며 보정할 얼굴의 새 3D 지오메트리 생성을 포함하지 않음.
+- 기존 라이브 턱선 변형 비활성화와 메시 foldover/stretch 가드는 계속 유지.
+
+### QA/다음
+- 정적/동적 Node 검사, mock ImageSegmenter 결과/취소/에러 검사, Python 버전 엔트리/자산 확인.
+- 장치 미검증: Android Chrome, Samsung Internet, iOS Safari에서 모델 다운로드, 한손 가림/양쪽 머리카락, 정면/30°/60° 각도, 카메라 전면 미러/후면, 실내 역광, 10분 FPS/발열.
+- 다음 패치: 사용자 실기기 QA 로그를 토대로 디바이스별 분할 성능 프로파일, 카메라 흐름과 충돌 없는 Worker 작업 분리, 3D 표현 베이스 확장.
+
+- **성능 추가:** 사진/영상 segmenter 입력은 긴 변 320px(배터리 256px)로 축소한 캔버스 사용. full-HD 크기의 분할 마스크 할당 방지.
+
+
+## v0.3.1 — 포즈 연속성·마스크 정렬·GPU 메시 업로드 최적화 (2026-11-04)
+- **Pose Continuity**: 3개 이상 안정 프레임 확인 후 얼굴 변형을 서서히 복구. 급격한 회전·포즈 추정 누락 때 즉각 신뢰도 감쇠. 2D fallback은 낮은 확신도로 제한.
+- **조명 신뢰도**: 포즈 신뢰도 감소 시 3D 근사 조명 신뢰도도 함께 감쇠. 실제 3D 복원·광원 위치 추적은 아님.
+- **Matte Alignment**: 코뿐 아니라 양쪽 눈 중심·너비·기울기 확인. 옛 마스크가 회전한 얼굴의 잘못된 위치에 붙는 상황 억제.
+- **GPU/CPU**: 메시 변형 강도가 0이고 이미 항등 UV가 업로드된 상태면 불필요한 4,161-정점 재계산/버퍼 업로드 생략. 변형 필요 시 즉시 갱신.
+- **보안/개인정보**: 얼굴 데이터·사진 추가 저장 및 네트워크 전송 기능 없음. 프리셋 구조 및 사진 공유 기존 방식 유지.
+- **중요**: 실제 모바일 GPU 장시간 출력·조명 화질·측면 가림·턱선 품질은 실기기 QA 필요. 자동 테스트는 이 효과를 입증하지 못함.
+
+- **WebGL2 context restore 안정화**: GPU buffer가 재생성되면 meshIdentityReady를 무조건 false로 리셋하고 첫 프레임 메시 업로드를 강제해 검은 화면/원본 UV 미업로드 위험 완화.
+
+
+---
+
+# v0.9.0 통합 인수인계 — 2026-11-04
+
+## 변경 목적
+중간 버전 별도 릴리스 없이 0.3.1의 안정화 기반을 유지하며 0.9.0을 통합 베타로 구성. 최종 목표는 게임 캐릭터 편집에 가까운 2D/3D 기반 얼굴 커스터마이징이지만, 이번 베타는 실제 구현 범위만 릴리스로 표기.
+
+## 추가·수정 파일
+- main.v0.9.0.js: 새 UI/Face Sculpt/Studio Light/스냅샷/공유 링크/QA/기존 성능·가림·메시 통합
+- face-sculpt.v0.9.0.mjs: 6영역 모델, inverse UV, contour safety, live confidence/보수적 제한, 선계산된 warp 함수
+- mesh-warp.v0.9.0.mjs: 기존 foldover/stretch fail-safe와 새 국소 Warp 합성
+- look-presets.v0.9.0.mjs + look-links.v0.9.0.mjs: 설정 정규화/저장/링크 공유 및 레거시 지원
+- index.html + styles.css: 모바일 제어 패널/다양한 슬라이더/스튜디오 조명/라이브 진단
+- 테스트: tests/v090-face-sculpt.test.mjs, tests/v090-look-links.test.mjs, tests_v090_integration.py
+- docs/RELEASE_V090.md, docs/ROADMAP_V090.md, docs/DEVICE_QA_V090.md, docs/QA_RUN_V090.txt
+
+## 기존 데이터 마이그레이션
+- localStorage의 maxvfx.beauty.v0.1.preferences 및 maxvfx.beauty.custom.looks.v1 키 그대로 사용
+- 이전 look.v2 스키마의 기존 필드는 유지, 새 studio 및 liveSculpt는 optional이고 구버전에는 기본 OFF
+- 새 얼굴 6개 파라미터가 없는 옛 프리셋은 0 강도로 로드
+- URL 공유 해시는 #look= 형태로, URL에 사진/얼굴 좌표 없음
+
+## 안전 및 남은 문제
+- 기존 수학적 fail-safe 2개(삼각 메시 뒤집힘/UV stretch)와 contour rim attenuation 유지.
+- 라이브 볼/턱 변형 OFF, 세부 미형 BETA 자체도 기본 OFF.
+- 얼굴 완전 가림 중 정확한 3D 추적은 불가능하며, 기존 live transition/원본 복구 유지.
+- 이미지 세그먼테이션 모델의 손/머리카락 인식은 오류 가능. 실기기 테스트 필요.
+- 모바일 GPU/WebGL/브라우저 UI 시각 테스트 불가능(환경 정책 차단), Android/iOS QA 미완료.
+
+## 다음 작업(0.9.0 검증→1.0.0)
+1. Android Galaxy / Xiaomi / iOS Safari/WebView: 기본 필터, 6영역 조절, 조명, 원본 비교 PNG, 룩 링크 테스트
+2. 턱선 외곽 신뢰도 검증(빠른 회전/손/머리카락/측면 30/45/60도), 실측 시 failure zero 목표
+3. 10분 연속 FPS/발열/누수 로그 및 adaptive quality 튜닝
+4. 장래 3D identity shape 및 blendshape capture 설계(개인정보 동의/저장 위치/모델 호환/안전성 검토)
+
+**GitHub 원격 변경 없음.** GitHub 업로드는 사용자가 실행.
