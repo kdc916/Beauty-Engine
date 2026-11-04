@@ -82,3 +82,11 @@ PC와 모바일 브라우저의 카메라에서 화사한 중국식 뷰티 필�
 - QA: JS 구문 및 정적 회귀 PASS; Chromium 390×844, 360×667, 1280×800의 Canvas 2D fallback에서 프리뷰 고정·슬라이더·마스크 버튼 기능 PASS.
 - 미검증: 실제 GPU WebGL2 셰이더 구동, MediaPipe 모델 실사용, Android Chrome/iOS Safari 실기기.
 - 다음 v0.1.5: 헤어라인 마스크 QA, 립/블러셔 메시 정밀화, FPS/GPU 프로파일러.
+
+
+## v0.1.5 (2026-11-04)
+- 별도 makeupMaskCanvas / GPU TEXTURE2: R=입술 실루엣, G=블러셔. INNER_LIPS 내부 삭제로 입 안쪽 및 치아 컬러 오염 방지.
+- Face Landmarker 478점 전체에 카메라 동작 적응형 시간 필터 적용(정적 사진은 원본 좌표 유지). 이 위치를 피부/메이크업 마스크와 미형 모두에서 사용.
+- 디버그 마스크: 초록 피부, 분홍 입술, 주황 볼.
+- UI/UX: 모바일 고정 프리뷰, 샘플 인물, 비교 UI 유지.
+- 남은 작업: Android/iOS Safari GPU 실기기 확인, 측면 얼굴/입을 크게 벌린 표정 QA, GPU 프로파일링.
