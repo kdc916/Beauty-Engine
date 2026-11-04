@@ -5,15 +5,15 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="theme-color" content="#10111a" />
   <meta name="description" content="maxVFX Beauty Engine — 브라우저 실시간 뷰티 카메라" />
-  <title>maxVFX Beauty Engine · v0.2.0</title>
+  <title>maxVFX Beauty Engine · v0.2.1</title>
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="./styles.css?v=0.2.0" />
+  <link rel="stylesheet" href="./styles.css?v=0.2.1" />
 </head>
 <body>
   <div class="app-shell">
     <header class="topbar">
       <a class="brand" href="./" aria-label="maxVFX Beauty Engine"><span class="brand-mark">✦</span><span><b>maxVFX</b><small>BEAUTY ENGINE <em>BETA</em></small></span></a>
-      <div class="top-actions"><span class="version">v0.2.0</span><button id="helpBtn" class="icon-button" aria-label="도움말" title="도움말">?</button></div>
+      <div class="top-actions"><span class="version">v0.2.1</span><button id="helpBtn" class="icon-button" aria-label="도움말" title="도움말">?</button></div>
     </header>
     <main class="workspace">
       <section class="stage-panel" aria-label="카메라 미리보기">
@@ -48,6 +48,31 @@
           <button type="button" id="cameraBtn" class="source-button" aria-pressed="false">◉ 카메라</button>
           <button type="button" id="uploadBtn" class="source-button" aria-pressed="false">▣ 사진</button>
         </div>
+        <details id="referencePanel" class="reference-panel" open>
+          <summary class="reference-summary"><span><span class="ref-eyebrow">NEW · v0.2.1</span><strong>참고 얼굴 분석</strong></span><span class="ref-collapse">펼치기 / 접기</span></summary>
+          <p class="ref-description">내 사진과 참고 사진을 비교해 눈·코·입술·턱 등 얼굴 비율을 확인합니다. 이번 버전은 <b>분석 전용</b>이며 닮은꼴 변형은 다음 패치에 추가됩니다.</p>
+          <div class="ref-cards">
+            <div class="ref-photo-card">
+              <div class="ref-photo-title">01 내 사진 <button type="button" id="refOwnClear" class="ref-delete" hidden>삭제</button></div>
+              <div class="ref-thumb-wrap"><img id="refOwnThumb" alt="분석할 내 사진 미리보기" hidden /><span class="ref-placeholder">내 사진을 선택하세요</span></div>
+              <button type="button" id="refOwnPick" class="ref-pick">사진 선택</button>
+              <button type="button" id="refUsePreview" class="ref-pick ref-secondary">현재 프리뷰 사용</button>
+              <small id="refOwnStatus" class="ref-status" role="status" aria-live="polite">사진을 선택해 주세요.</small>
+            </div>
+            <div class="ref-photo-card">
+              <div class="ref-photo-title">02 참고 인물 <button type="button" id="refTargetClear" class="ref-delete" hidden>삭제</button></div>
+              <div class="ref-thumb-wrap"><img id="refTargetThumb" alt="참고 인물 사진 미리보기" hidden /><span class="ref-placeholder">참고 사진을 선택하세요</span></div>
+              <button type="button" id="refTargetPick" class="ref-pick">사진 선택</button>
+              <small id="refTargetStatus" class="ref-status" role="status" aria-live="polite">사진을 선택해 주세요.</small>
+            </div>
+          </div>
+          <div class="ref-results" aria-live="polite">
+            <strong>얼굴 특징 비교</strong>
+            <p id="refSummary">두 사진 모두 얼굴 분석이 완료되면 부위별 비율 차이를 보여줍니다.</p>
+            <div id="refComparison"></div>
+          </div>
+          <p class="ref-privacy">사진·얼굴 좌표는 기기 메모리에서만 처리하며, 비교 자료를 서버나 프리셋에 저장하지 않습니다. 얼굴 모델 다운로드에는 인터넷이 필요합니다.</p>
+        </details>
         <div class="section-label"><span>01</span> BEAUTY LOOK</div>
         <div class="preset-row" id="presets" role="group" aria-label="뷰티 프리셋"></div>
         <div class="section-label"><span>02</span> FINE TUNING</div>
@@ -55,15 +80,17 @@
         <div class="sliders" id="sliders"></div>
         <div class="control-foot"><div class="switch-row"><div><strong>뷰티 필터</strong><small>원본 화면과 언제든 비교할 수 있어요</small></div><label class="switch"><input type="checkbox" id="enabled" checked /><span></span></label></div><div class="button-grid"><button id="savePresetBtn" class="subtle-button">♡ 내 설정 저장</button><button id="exportBtn" class="subtle-button">↥ 설정 내보내기</button></div><div class="button-grid"><button id="importBtn" class="subtle-button">↧ 설정 가져오기</button><button id="comparePanelBtn" class="subtle-button">◐ 원본 비교</button></div></div>
         <div class="mask-qa"><button id="debugMaskBtn" class="subtle-button" aria-pressed="false" type="button">▦ 피부 마스크 확인</button><small>녹색 영역만 피부 보정됩니다. 진단 후 다시 끄세요.</small></div>
-        <div class="info-banner"><b>✦ v0.2.0 Live Preview</b><p>실시간 얼굴 추적에는 MediaPipe 모델이 사용됩니다. 첫 연결 시 모델을 다운로드하며, 네트워크 또는 기기에 따라 기능이 제한될 수 있습니다.</p></div>
+        <div class="info-banner"><b>✦ v0.2.1 Live Preview</b><p>실시간 얼굴 추적에는 MediaPipe 모델이 사용됩니다. 첫 연결 시 모델을 다운로드하며, 네트워크 또는 기기에 따라 기능이 제한될 수 있습니다.</p></div>
       </aside>
     </main>
     <footer class="footer">maxVFX BEAUTY ENGINE <span>© 2026 · Browser Preview</span></footer>
   </div>
   <input id="imageInput" type="file" accept="image/*" hidden />
+  <input id="refOwnInput" type="file" accept="image/jpeg,image/png,image/webp" hidden />
+  <input id="refTargetInput" type="file" accept="image/jpeg,image/png,image/webp" hidden />
   <input id="presetInput" type="file" accept="application/json,.json" hidden />
-  <dialog id="helpDialog"><div class="dialog-head"><h2>사용 안내</h2><button id="closeHelp" class="icon-button">✕</button></div><p>① 앱이 실행되면 내장 샘플 인물이 자동으로 표시됩니다. 보정 패널 상단의 샘플·카메라·사진 버튼으로 소스를 전환하세요.</p><p>② 모바일에서는 얼굴 프리뷰가 항상 위에 보입니다. 아래 보정 패널만 스크롤하며 프리셋과 슬라이더를 조절하세요.</p><p>③ <b>비교</b> 버튼을 누르고 화면을 좌우로 드래그하면 원본과 보정 결과를 비교할 수 있습니다.</p><p>④ 중앙 셔터로 이미지를 저장하고, 설정을 JSON으로 내보내거나 가져올 수 있습니다.</p><p>※ 모바일 카메라는 HTTPS(GitHub Pages)에서 동작합니다. 얼굴형/눈/메이크업은 얼굴 추적 모델 로딩이 성공하고 얼굴이 감지될 때 적용됩니다. 촬영 영상 자체는 서버로 전송하지 않습니다.</p><button class="primary" id="okHelp">확인</button></dialog>
+  <dialog id="helpDialog"><div class="dialog-head"><h2>사용 안내</h2><button id="closeHelp" class="icon-button">✕</button></div><p>① 앱이 실행되면 내장 샘플 인물이 자동으로 표시됩니다. 보정 패널 상단의 샘플·카메라·사진 버튼으로 소스를 전환하세요.</p><p>② 모바일에서는 얼굴 프리뷰가 항상 위에 보입니다. 아래 보정 패널만 스크롤하며 프리셋과 슬라이더를 조절하세요.</p><p>③ <b>비교</b> 버튼을 누르고 화면을 좌우로 드래그하면 원본과 보정 결과를 비교할 수 있습니다.</p><p>④ 참고 얼굴 분석 패널에서 내 사진/참고 사진을 선택하면 눈·코·입술·턱 비율 차이를 비교할 수 있습니다. 본 단계에서는 얼굴 변형 결과가 만들어지지 않습니다.</p><p>④ 중앙 셔터로 이미지를 저장하고, 설정을 JSON으로 내보내거나 가져올 수 있습니다.</p><p>※ 모바일 카메라는 HTTPS(GitHub Pages)에서 동작합니다. 얼굴형/눈/메이크업은 얼굴 추적 모델 로딩이 성공하고 얼굴이 감지될 때 적용됩니다. 촬영 영상 자체는 서버로 전송하지 않습니다.</p><button class="primary" id="okHelp">확인</button></dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script type="module" src="./main.v0.2.0.js"></script>
+  <script type="module" src="./main.v0.2.1.js"></script>
 </body>
 </html>
