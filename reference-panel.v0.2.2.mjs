@@ -208,6 +208,7 @@ export function initReferencePanel({getCurrentSource,notify=()=>{},onAnalysisCha
     triptychVisible=!triptychVisible;$('refMatchTriptych').hidden=!triptychVisible;
     $('refMatchCompare').textContent=triptychVisible?'3면 비교 닫기':'원본 · 참고 · 결과 3면 보기';
     if(triptychVisible)renderResultPreview(getCurrentSource()?.previewCanvas);
+    onConfigChange({...matchConfig,regions:{...matchConfig.regions}});
   });
   function renderResultPreview(canvas){
     if(!triptychVisible||!canvas)return;
@@ -220,5 +221,5 @@ export function initReferencePanel({getCurrentSource,notify=()=>{},onAnalysisCha
     closed=true;release('source');release('reference');
     if(analyzer?.close)analyzer.close();
   },{once:true});
-  return {reset:()=>{resetRole('source');resetRole('reference');},renderResultPreview,clearSource:()=>resetRole('source'),getConfig:()=>({...matchConfig,regions:{...matchConfig.regions}})};
+  return {reset:()=>{resetRole('source');resetRole('reference');},renderResultPreview,isTriptychOpen:()=>triptychVisible,clearSource:()=>resetRole('source'),getConfig:()=>({...matchConfig,regions:{...matchConfig.regions}})};
 }
