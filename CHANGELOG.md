@@ -1,3 +1,11 @@
+## v0.2.2 (2026-11-04)
+- Added bounded five-region Reference Match inverse mesh warp with IPD/roll normalization.
+- Added whole-face/eyes/nose/lips/jaw/brow sliders, enable toggle, own/reference/result triptych.
+- Synced selected own photo with pinned main preview; invalidated stale match on source changes.
+- Fixed existing interleaved vertex indexing bug in foldover damping and identity restoration.
+- Separated full corrected triptych result from the main before/after split.
+- Disabled reference geometry controls without WebGL2. No medical surgery outcome prediction.
+
 ## v0.2.0 (2026-11-04)
 - Replaced image-wide single-quad eye/jaw shader deformation with 56×72 triangular inverse-UV mesh.
 - Clipped deformation to MediaPipe 36-point face outline and feathered the outer face boundary.
