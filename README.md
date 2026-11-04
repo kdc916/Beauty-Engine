@@ -71,3 +71,11 @@ See [docs/HANDOFF.md](docs/HANDOFF.md) and [docs/QA_REPORT.md](docs/QA_REPORT.md
 - 립 윤곽 20개 랜드마크 기반 마스크 적용, 입 안쪽/치아 보호
 - 라디얼 그라디언트 블러셔를 별도 GPU 마스크로 합성
 - 움직임 적응형 얼굴 랜드마크 스무딩 및 디버그 마스크 컬러 구분
+
+
+## 로드맵 v1.1 — Reference Match / 상담용 시각화 계획 (2026-11-04)
+- [공식 개정 로드맵](docs/ROADMAP.md): 기존 v0.1~v1.0 유지, v0.2.1~0.2.3 Reference Match 및 v0.3.1~0.3.2 Consultation Visualization 추가.
+- [구현 설계](docs/REFERENCE_MATCH_DESIGN.md) · [전용 QA 계획](docs/QA_REFERENCE_MATCH.md)
+- [설정 스키마](schemas/reference-match-config.schema.json) · [예시 프리셋](examples/reference-match-preset.json)
+- **현재 실행 버전은 v0.1.5 그대로입니다. 이 기능은 아직 구현되지 않았습니다.**
+- 상담용 가상 이미지는 실제 수술 결과 예측이나 의학적 상담을 대체하지 않습니다.
