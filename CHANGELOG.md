@@ -1,3 +1,12 @@
+## v0.1.4 — 2026-11-04
+- Real face-oval skin mask using MediaPipe landmarks (36 contour points)
+- Eyes, brows, lips excluded from smoothing and glow region
+- Skin-mask-weighted edge-aware blur to avoid bleeding across feature boundaries
+- On-demand still-image rendering (camera continues real-time)
+- Face tracking source-generation guard, QA skin overlay toggle
+- Preserves sample portrait and fixed mobile preview
+- WebGL2 GPU runtime and real MediaPipe detection still require device validation
+
 # maxVFX Beauty Engine Change Log
 
 ## v0.1.2 — 2026-11-04
