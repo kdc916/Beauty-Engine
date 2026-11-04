@@ -100,3 +100,21 @@ PC와 모바일 브라우저의 카메라에서 화사한 중국식 뷰티 필�
 - **실행 코드(index.html, main.v0.1.5.js, styles.css) 변경 없음.** Reference Match 및 Surgery Preview는 아직 미구현.
 - 검증: JSON/문서 구조 테스트, GitHub 파일 반영 확인. 실제 얼굴 매칭/상담 시뮬레이션 QA는 향후 수행.
 - 다음 실제 앱 패치: v0.1.6 피부결·눈 밑·하이라이트 보정 안정화 후 v0.2.0 메시 Warp 작업.
+
+
+## v0.1.6 — 피부 보정 품질 및 프리셋 복원 수정 (2026-11-04)
+### 신규 기능
+- 기존 8방향 단일 스케일 피부 블러를 8방향 × 2반경(1.5px/4.1px) 기반의 피부 마스크 가중 bilateral 스무딩으로 변경. 근거리 고주파 피부결은 가변 강도로 재합성.
+- 피부 탭에 detail(피부결 보존), underEye(눈 밑 밝기), highlight(하이라이트 보호) 추가. 프리셋별 기본값 제공.
+- 145/374번 아래 눈꺼풀 랜드마크 추가. Shader uPoints 11→13, normalizedPoints Float32Array 22→26, JS 업로드 11→13.
+- 눈 밑 밝기는 피부 마스크와 하이라이트 보호 계수를 곱해 눈/입술/배경으로 번지는 현상 억제.
+- highlight soft shoulder는 피부 영역에 한정, tone/skin mask 이외 픽셀은 기존 색감 유지.
+- 레거시 localStorage 프리셋 복원 시 새 필드에 현재 선택한 프리셋의 기본값 사용하도록 migration.
+### 유지
+- GitHub Pages의 실제 실행 파일: index.html → main.v0.1.6.js (버전별 새 URL로 캐시 회피).
+- 샘플 인물 자동 로딩, 모바일 고정 프리뷰/독립 하단 스크롤, 원본/보정 비교, 얼굴형/눈 Warp, 립·블러셔, 기존 저장 형식.
+- Roadmap v1.1의 Reference Match/Consultation 기능은 미구현 상태 유지. 계획 문서만 존재.
+### QA/주의
+- node --check / 여섯 정적 회귀 검사 통과. WebGL2 GPU 렌더/실기기 품질은 이 환경에서 보안 정책으로 실행 불가.
+- 새 2반경 스무딩의 GPU 샘플링 부하는 증가하여 저사양 Android에서 FPS 확인 필수.
+- 다음: 실제 기기 피부 품질 확인, 피부 마스크 헤어라인·코 옆/눈 밑 오류 검증, 퍼포먼스 측정 및 Adaptive Quality.
