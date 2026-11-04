@@ -3,18 +3,18 @@ from pathlib import Path
 import re
 
 root = Path(__file__).resolve().parent
-js = (root / "main.v0.1.5.js").read_text(encoding="utf-8")
+js = (root / "main.v0.1.6.js").read_text(encoding="utf-8")
 html = (root / "index.html").read_text(encoding="utf-8")
 css = (root / "styles.css").read_text(encoding="utf-8")
 
-assert 'main.v0.1.5.js' in html and 'id="debugMaskBtn"' in html
+assert 'main.v0.1.6.js' in html and 'id="debugMaskBtn"' in html
 assert ".mask-qa" in css
 for required in (
     "function rasterizeSkinMask(points)",
     "function uploadMaskTexture()",
     "uniform sampler2D uSkinMask;",
     "texture(uSkinMask,src).r",
-    "texture(uSkinMask,q).r",
+    "texture(uSkinMask,toneUV).r",
     "if(epoch!==sourceGeneration)return;",
     "function invalidate()",
     "if(state.mode==='camera'){if(t-lastMetric>=1200)"
