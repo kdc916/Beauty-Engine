@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "maxvfx.reference-match.v1",
+  "mode": "reference",
+  "enabled": false,
+  "globalStrength": 0.35,
+  "regions": {
+    "eyes": 0.3,
+    "nose": 0.2,
+    "lips": 0.3,
+    "jaw": 0.35,
+    "brow": 0.2
+  },
+  "maxDisplacementIPD": 0.06,
+  "includeMakeupLook": false,
+  "includeColorLook": false
+}
