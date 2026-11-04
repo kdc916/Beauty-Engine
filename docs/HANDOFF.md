@@ -90,3 +90,13 @@ PC와 모바일 브라우저의 카메라에서 화사한 중국식 뷰티 필�
 - 디버그 마스크: 초록 피부, 분홍 입술, 주황 볼.
 - UI/UX: 모바일 고정 프리뷰, 샘플 인물, 비교 UI 유지.
 - 남은 작업: Android/iOS Safari GPU 실기기 확인, 측면 얼굴/입을 크게 벌린 표정 QA, GPU 프로파일링.
+
+
+## 2026-11-04 — 로드맵 v1.1 개정 (앱 v0.1.5 유지)
+- 사용자 요청: 내 얼굴 사진 + 원하는 인물 참고 사진 분석 → 부분적인 얼굴 스타일 매칭; 이후 상담용 가상 시각화.
+- 새 계획: v0.2.0 Mesh Warp 코어, v0.2.1 2장 분석, v0.2.2 Reference Match/3면 비교, v0.2.3 QA, v0.3.1 상담용 시각화, v0.3.2 3D 근사 연구.
+- 신규 문서: docs/ROADMAP.md, docs/REFERENCE_MATCH_DESIGN.md, docs/QA_REFERENCE_MATCH.md, schemas/reference-match-config.schema.json, examples/reference-match-preset.json, tests_reference_docs.py.
+- 프리셋에는 이미지/랜드마크/신원 정보 저장 금지. 상담 결과는 '실제 수술 결과를 예측하거나 보장하지 않습니다' 고지.
+- **실행 코드(index.html, main.v0.1.5.js, styles.css) 변경 없음.** Reference Match 및 Surgery Preview는 아직 미구현.
+- 검증: JSON/문서 구조 테스트, GitHub 파일 반영 확인. 실제 얼굴 매칭/상담 시뮬레이션 QA는 향후 수행.
+- 다음 실제 앱 패치: v0.1.6 피부결·눈 밑·하이라이트 보정 안정화 후 v0.2.0 메시 Warp 작업.
