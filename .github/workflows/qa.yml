@@ -1,0 +1,26 @@
+name: Beauty Engine QA
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  static-and-mesh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: JS syntax
+        run: |
+          node --check main.v0.2.0.js
+          node --check mesh-warp.v0.2.0.mjs
+      - name: Dynamic mesh geometry tests
+        run: node --test tests/mesh-warp.test.mjs
+      - name: Legacy feature regression checks
+        run: |
+          for file in tests_*.py; do python "$file"; done
