@@ -5,9 +5,9 @@ from pathlib import Path
 import math
 
 root=Path(__file__).resolve().parent
-code=(root/'main.v0.1.3.js').read_text()
+code=(root/'main.v0.1.4.js').read_text()
 html=(root/'index.html').read_text()
-assert 'src="./main.v0.1.3.js"' in html
+assert 'src="./main.v0.1.4.js"' in html
 assert 'src="./main.js"' not in html
 assert 'if(r >= 1.0) return p;' in code
 assert 'if(strength <= 0.00001) return p;' in code
