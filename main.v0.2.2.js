@@ -356,6 +356,7 @@ window.addEventListener('pagehide',stopStream);
 referencePanel=initReferencePanel({
   getCurrentSource:()=>({source:state.source,mode:state.mode,mirror:state.mirror,previewCanvas:gl?glCanvas:fallbackCanvas}),
   notify:toast,
+  canWarp:()=>!!gl,
   onSourceSelected:file=>{void loadImage(file,true);},
   onAnalysisChange:({source,reference})=>{
     referenceGeometry=null;
