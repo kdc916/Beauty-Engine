@@ -118,3 +118,20 @@ PC와 모바일 브라우저의 카메라에서 화사한 중국식 뷰티 필�
 - node --check / 여섯 정적 회귀 검사 통과. WebGL2 GPU 렌더/실기기 품질은 이 환경에서 보안 정책으로 실행 불가.
 - 새 2반경 스무딩의 GPU 샘플링 부하는 증가하여 저사양 Android에서 FPS 확인 필수.
 - 다음: 실제 기기 피부 품질 확인, 피부 마스크 헤어라인·코 옆/눈 밑 오류 검증, 퍼포먼스 측정 및 Adaptive Quality.
+
+
+## v0.2.0 — Face Mesh Warp 기반 패치 (2026-11-04)
+### 구현
+- `mesh-warp.v0.2.0.mjs`: 56×72 셀의 고정 destination 삼각형 mesh (4161 vertices, 8064 triangles), 36점 FACE_OUTLINE polygon, ROI feathering, 눈·하안면 변형, 전역 UV 변환 없음, 반전/종횡비 대응.
+- `main.v0.2.0.js`: 독립 모듈 import. vertex shader 입력 aPos/aSourceUv, fragment src=vMeshUv로 변경. 기존 mapEyes와 단일 프래그먼트 전역 Warp 코드를 제거하고 gl.drawElements를 사용.
+- `meshDirty`는 프리셋/미형 슬라이더/얼굴 추적/소스 변경/해상도 변경 시만 설정하고, 60fps 프레임마다 CPU 메시를 불필요하게 갱신하지 않음.
+- 메시 UV가 뒤집히는 경우 변위 강도를 1/2씩 감소, 최종 실패 시 항등 매핑 처리. 얼굴 외곽에서는 변위 0.
+- v0.1.6의 피부결·눈밑·하이라이트·립/볼 메이크업, 샘플 인물, 모바일 고정 프리뷰·사진 저장, JSON 설정은 변경하지 않음.
+- 웹 엔트리: index.html → main.v0.2.0.js → mesh-warp.v0.2.0.mjs.
+### QA
+- JavaScript 구문 / Node 동적 mesh math / Python 정적 회귀 6개 PASS.
+- Chromium headless의 localhost 접근이 관리자 정책으로 차단되어 GPU 실제 픽셀/모바일 테스트는 미검증. 미확인 항목을 통과로 표시하지 말 것.
+### 미구현/다음 단계
+- 본 패치는 v0.2.0의 Face Mesh Warp **기초**만 구현. 코·입술 정교 변형, 참조 인물 업로드/Reference Match, Consultation Visualization 미구현.
+- v0.2.1: 본인/참고 이미지 각각 독립 분석, 1인 감지, 포즈/표정 차이 경고. v0.2.2: 부위별 Reference Match/3면 비교.
+- 장기간 실행, 여러 얼굴, 극단 각도 및 경계 이음새는 Android/iOS 기기에서 수동 QA 필요.
