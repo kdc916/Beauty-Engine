@@ -57,3 +57,14 @@ PC와 모바일 브라우저의 카메라에서 화사한 중국식 뷰티 필�
 - 비교선은 canvas 표시 영역을 기준으로 산정. WebGLRenderingContext를 canvas로 잘못 참조하던 버그 수정.
 - QA: Node 구문 검사, 4:5/1:1/16:9 UV 수학 회귀 테스트 통과. Chromium/Playwright 실제 브라우저 접근은 보안 정책(ERR_BLOCKED_BY_ADMINISTRATOR)으로 차단. 모바일 실기기 QA 필요.
 - 다음 단계: 모바일에서 v0.1.2 버전 확인 후 동일 이미지로 머리카락/눈 비교. 오류 재현 시 새 스크린샷 기준 조사.
+
+
+## v0.1.3 — 샘플 테스트 및 동시 보정 UI (2026-11-04)
+- 생성된 이전 샘플 인물 사진을 360×450 WebP로 최적화하여 `assets/sample-portrait.webp`에 번들링. Git blob SHA: `30e063c5c138d31c534a00a3febc3bcc84b03d84`.
+- `main.v0.1.3.js`: `loadBundledSample()` 자동 실행, 시작 시 비교 모드 ON, 입력 소스 3종 전환 및 미러 상태 반영. Canvas2D fallback 비교 추가.
+- `index.html`: 샘플/카메라/사진 버튼, v0.1.3 CSS/JS 경로와 사용 안내 수정.
+- `styles.css`: 모바일 100dvh 48:52 2행 구성, 상단 프리뷰 고정 및 하단 overflow-y:auto. grid align-items:stretch, 자식 height:100% 필수. 가로 방향 2열 배치.
+- QA: Node 구문, 정적 테스트, Chromium set_content 390×844 / 360×667 / 820×390 / 1280×800 레이아웃 성공. 브라우저 JS 주입에서 SAMPLE PHOTO 시작, 비교 ON, 스크롤 중 프리뷰 고정 확인.
+- 제한: 헤드리스 WebGL2 미지원, 미디어파이프 CDN 모델/실기기 카메라 검증 미완료. 네트워크 경유 실제 페이지 접속은 정책 차단.
+- 다음: 실제 Android Chrome에서 얼굴 탐지 상태, 프리셋 적용, 가로보기, 카메라 권한 및 키보드/주소창 높이 변경 테스트.
+- 공식 저장소: https://github.com/kdc916/Beauty-Engine
