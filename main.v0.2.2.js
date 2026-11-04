@@ -18,7 +18,7 @@ const FIELDS = {
 };
 const STORAGE_KEY='maxvfx.beauty.v0.1.preferences';
 const state={preset:'douyin',values:{...PRESETS.douyin},enabled:true,tab:'skin',mode:'idle',face:null,faceDetected:false,mirror:true,compare:false,comparePosition:.5,stream:null,source:null,tracker:null,trackerLoading:false,ready:false,fps:0};
-let referencePanel=null,referenceGeometry=null,referenceConfig=null;
+let referencePanel=null,referenceGeometry=null,referenceConfig=null,referenceOwnLandmarks=null;
 const hiddenVideo=$('video'),glCanvas=$('glCanvas'),fallbackCanvas=$('fallbackCanvas'),stage=$('stage');
 let gl=null,program=null,uniforms={},texture=null,maskTexture=null,maskDirty=true,buffer=null,meshIndexBuffer=null,meshDirty=true,faceMesh=createWarpGrid(),lastTime=0,lastDetect=0,lastFrame=0,frameCount=0,lastMetric=0,toastTimer=0,messageTimer=0,raf=0,sourceW=0,sourceH=0;
 
@@ -272,8 +272,9 @@ function uploadMaskTexture(){
 function draw(t){if(!state.ready||!state.source)return;const src=state.source;if(state.mode==='camera'&&src.readyState<2){raf=requestAnimationFrame(draw);return;}const [w,h]=resolution();const canvas=gl?glCanvas:fallbackCanvas;if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;sourceW=w;sourceH=h;meshDirty=true;syncCompareDivider();}
   if(gl){try{gl.viewport(0,0,w,h);gl.useProgram(program);
     if(meshDirty){
-      const outline=trackedLandmarks?FACE_OUTLINE_IDS.map(i=>trackedLandmarks[i]):null;
-      updateWarpGrid(faceMesh,{face:skinMaskReady?state.face:null,outline,mirror:state.mirror,width:w,height:h,slim:state.values.slim/100,eyes:state.values.eyes/100,referenceMatch:state.mode!=='camera'&&skinMaskReady?referenceGeometry:null,referenceConfig});
+      const matchingLandmarks=referenceOwnLandmarks&&state.mode!=='camera'?referenceOwnLandmarks:null;
+      const outline=(trackedLandmarks||matchingLandmarks)?FACE_OUTLINE_IDS.map(i=>(matchingLandmarks||trackedLandmarks)[i]):null;
+      updateWarpGrid(faceMesh,{face:skinMaskReady?state.face:null,outline,mirror:state.mirror,width:w,height:h,slim:state.values.slim/100,eyes:state.values.eyes/100,referenceMatch:state.mode!=='camera'?referenceGeometry:null,referenceConfig});
       gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferSubData(gl.ARRAY_BUFFER,0,faceMesh.vertices);
       meshDirty=false;
     }
@@ -359,7 +360,7 @@ referencePanel=initReferencePanel({
   canWarp:()=>!!gl,
   onSourceSelected:file=>{void loadImage(file,true);},
   onAnalysisChange:({source,reference})=>{
-    referenceGeometry=null;
+    referenceGeometry=null;referenceOwnLandmarks=source?.landmarks||null;
     try{if(source&&reference){
       referenceGeometry=buildReferenceMatch(source.landmarks,source.width,source.height,reference.landmarks,reference.width,reference.height);
     }}catch(error){console.warn('Reference Match build:',error);toast('얼굴 비율 차이가 커서 매칭을 제한했습니다.');}
