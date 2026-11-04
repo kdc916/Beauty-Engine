@@ -45,3 +45,13 @@
 - PASS: 저장소 내장 이미지 WebP blob SHA `30e063c5c138d31c534a00a3febc3bcc84b03d84`.
 - BLOCKED: 외부/localhost 실제 페이지 네비게이션은 이 환경에서 ERR_BLOCKED_BY_ADMINISTRATOR.
 - NEEDS DEVICE QA: Android/iOS의 WebGL2 뷰티 셰이더, MediaPipe 다운로드·얼굴 탐지, 카메라 입력 및 장시간 성능.
+
+
+## v0.1.4 QA (2026-11-04)
+- PASS: `node --check main.v0.1.4.js`
+- PASS: `python tests_geometry.py`, `python tests_mobile_layout.py`, `python tests_skin_mask.py`
+- PASS: Chromium Playwright UI smoke tests at 390x844, 360x667, 1280x800, deterministic face mock; zero JS page errors
+- PASS: Sample portrait auto-load, comparison split, slider update, independent mobile control scroll, mask QA button toggle
+- LIMIT: Runner exposes neither WebGL1 nor WebGL2; only Canvas2D fallback path was exercised, not GPU shader compilation or masking.
+- LIMIT: Live MediaPipe CDN/model load & actual mobile camera performance remain unverified.
+- NEXT: Verify face mask with real Android Chrome and iOS Safari, including face turning and hairline.
