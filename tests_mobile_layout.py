@@ -22,7 +22,7 @@ assert "new URL('./assets/sample-portrait.webp',import.meta.url)" in js
 assert "state.mode='sample'" in js
 assert "setActiveSource('camera')" in js and "setActiveSource('photo')" in js
 assert 'showCompare(true);startTracking();' in js
-assert '.control-panel{min-height:0;min-width:0;overflow-y:auto;' in css
+assert '.control-panel{height:100%;min-height:0;min-width:0;overflow-y:auto;' in css
 assert 'grid-template-rows:minmax(0,47fr) minmax(0,53fr)' in css
 assert 'height:100dvh' in css
 assert 'grid-template-columns:minmax(0,1fr) minmax(0,1fr)' in css
