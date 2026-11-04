@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/kdc916/Beauty-Engine/blob/main/schemas/reference-match-config.schema.json",
+  "title": "maxVFX Reference Match configuration",
+  "description": "Visual style settings only. Never store photos, facial landmarks, embeddings, names or image URLs in presets.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "mode",
+    "enabled",
+    "globalStrength",
+    "regions",
+    "maxDisplacementIPD",
+    "includeMakeupLook",
+    "includeColorLook"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "maxvfx.reference-match.v1"
+    },
+    "mode": {
+      "const": "reference"
+    },
+    "enabled": {
+      "type": "boolean"
+    },
+    "globalStrength": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "regions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "eyes",
+        "nose",
+        "lips",
+        "jaw",
+        "brow"
+      ],
+      "properties": {
+        "eyes": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "nose": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "lips": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "jaw": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "brow": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "maxDisplacementIPD": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 0.1,
+      "description": "Image-warp safety constraint in eye-distance units, NOT medical safety or surgical predictions."
+    },
+    "includeMakeupLook": {
+      "type": "boolean"
+    },
+    "includeColorLook": {
+      "type": "boolean"
+    }
+  }
+}
