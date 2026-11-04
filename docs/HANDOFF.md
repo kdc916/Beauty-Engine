@@ -38,3 +38,10 @@ PC와 모바일 브라우저의 카메라에서 화사한 중국식 뷰티 필�
 - MediaPipe: `startTracking()`, `updateFace()`
 - 프리셋: `PRESETS`, `FIELDS`
 - GitHub 저장소 주소는 사용자가 업로드 후 전달 예정. 전달받은 주소를 공식 패치 원본으로 사용.
+
+
+## v0.1.1 — 모바일 보정 화면 왜곡 수정 (2026-11-04)
+- 원인: mapEyes()가 화면 비율로 보정한 거리 벡터를 텍스처 UV 위치 계산에 재사용해 얼굴 및 배경이 늘어남.
+- 수정: 거리 계산용 metric 벡터와 원본 UV 변위 d를 분리. 보정 범위 밖에서는 원본 UV 유지.
+- 변경 파일: main.js, index.html.
+- 확인: JavaScript 구문 검사 통과. 실제 Android 모바일 화면 재검증 필요.
