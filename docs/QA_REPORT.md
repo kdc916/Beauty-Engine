@@ -1,4 +1,4 @@
-# v0.1.0 QA Report
+# v0.1.1 QA Report
 
 ## 정적 점검
 - JavaScript 구문 검사: 수행
@@ -29,32 +29,39 @@
 - Playwright Chromium 로컬 페이지 접근: **환경 보안 정책에서 차단됨** (`ERR_BLOCKED_BY_ADMINISTRATOR`). 화면 렌더·실제 WebGL 셰이더 컴파일 검증 불가.
 - 따라서 브라우저 구동과 실제 모바일 GPU 품질은 **PASS라고 주장하지 않음**.
 
-
-## v0.1.2 — 전역 가로 확대 회귀
-- PASS: JavaScript `node --check main.v0.1.2.js`
-- PASS: old-UV double aspect-scale 분석. 4:5 사진의 두 단계 샘플링이 0.8²를 만들어 화면을 약 1.56배 가로 확대.
-- PASS: 새 warp 반경 밖의 샘플 좌표 불변성 / 4:5, 1:1, 16:9 수학 회귀 검사.
-- BLOCKED: Playwright의 로컬 WebGL 브라우저 실행은 ERR_BLOCKED_BY_ADMINISTRATOR 정책 차단으로 검증 불가.
-- NEEDS DEVICE QA: 실제 모바일에서 v0.1.2가 표시되는지 및 동일 사진의 전후 보정 비교선 정렬 확인.
+## v0.1.1
+- PASS: JavaScript syntax validation (`node --check`).
+- NEEDS DEVICE QA: Galaxy/Android Chrome 사진 전후 비교에서 우측 영상 가로 늘어짐이 사라졌는지 확인.
 
 
-## v0.1.3 — 샘플과 화면 분할
-- PASS: `node --check main.v0.1.3.js`, `python tests_geometry.py`, `python tests_mobile_layout.py`.
-- PASS: Chromium `page.set_content` CSS 레이아웃 390×844, 360×667, 820×390, 1280×800. 390×844에서는 프리뷰 top=84px/bottom=411px, 컨트롤 top=438px/bottom=837px, 컨트롤 독립 스크롤, 페이지 전체 넘침 없음.
-- PASS: Chromium inline JS에서 샘플 자동 로딩, compare=true, 컨트롤 스크롤 중 프리뷰 위치 유지. WebGL2 미지원으로 Canvas2D fallback 실행.
-- PASS: 저장소 내장 이미지 WebP blob SHA `30e063c5c138d31c534a00a3febc3bcc84b03d84`.
-- BLOCKED: 외부/localhost 실제 페이지 네비게이션은 이 환경에서 ERR_BLOCKED_BY_ADMINISTRATOR.
-- NEEDS DEVICE QA: Android/iOS의 WebGL2 뷰티 셰이더, MediaPipe 다운로드·얼굴 탐지, 카메라 입력 및 장시간 성능.
+## v0.1.2
+- PASS: `node --check main.v0.1.2.js`
+- PASS: `python tests_geometry.py` (눈 영향범위 외 UV 불변, 비율 4:5/1:1/16:9, 캐시 갱신 경로, 비교 캔버스 실객체 참조)
+- PASS: 1122×1402 테스트 사진과 사용자의 2026-11-04 스크린샷 정합: 왼쪽 원본 영역 상단 비교 기준 상관계수 > 0.99, 우측 영역 SIFT 특징점은 구 셰이더의 약 1.56배 X 확대에 가까움
+- BLOCKED: Chromium/Playwright 로컬 브라우저 접근이 환경 보안 설정 `ERR_BLOCKED_BY_ADMINISTRATOR`로 차단되어 WebGL 실행 검증은 수행하지 못함.
+- NEEDS DEVICE QA: Android Chrome/Samsung Internet에서 버전 0.1.2 표시, 새 JS 로딩, 얼굴 사진 적용 후 비교선 우측 배경/머리카락 확대 사라짐 확인.
 
 
-## v0.1.4 QA (2026-11-04)
-- PASS: `node --check main.v0.1.4.js`
-- PASS: `python tests_geometry.py`, `python tests_mobile_layout.py`, `python tests_skin_mask.py`
-- PASS: Chromium Playwright UI smoke tests at 390x844, 360x667, 1280x800, deterministic face mock; zero JS page errors
-- PASS: Sample portrait auto-load, comparison split, slider update, independent mobile control scroll, mask QA button toggle
-- LIMIT: Runner exposes neither WebGL1 nor WebGL2; only Canvas2D fallback path was exercised, not GPU shader compilation or masking.
-- LIMIT: Live MediaPipe CDN/model load & actual mobile camera performance remain unverified.
-- NEXT: Verify face mask with real Android Chrome and iOS Safari, including face turning and hairline.
+## v0.1.3 — 사용성 및 샘플 이미지 QA
+- PASS: Node.js `--check main.v0.1.3.js`.
+- PASS: `python tests_geometry.py`, `python tests_mobile_layout.py`.
+- PASS: Chromium inline HTML/CSS 테스트 390×844, 360×667, 820×390 (가로보기), 1280×800.
+- PASS: 모바일 390×844은 프리뷰 top=84px, bottom=411px, 컨트롤 top=438px, bottom=837px, 패널 스크롤 가능, body 넘침 없음.
+- PASS: 360×667 모바일은 프리뷰 top=84px, bottom=326px, 컨트롤 top=353px, bottom=660px.
+- PASS: Chromium 런타임 인라인 실행으로 내장 샘플 자동 표시(`SAMPLE PHOTO`), 비교 모드 활성화, 패널 스크롤 시 프리뷰 좌표 불변 확인.
+- PASS: 생성 사진 WebP의 Git blob SHA `30e063c5c138d31c534a00a3febc3bcc84b03d84`가 저장소 업로드본과 일치.
+- BLOCKED: HTTP 네비게이션 Playwright는 로컬 보안 정책 `ERR_BLOCKED_BY_ADMINISTRATOR`.
+- NEEDS DEVICE QA: WebGL2 GPU 셰이더, MediaPipe Face Landmarker, Android/iOS 실제 카메라와 프리셋 보정 결과.
+
+
+## v0.1.4 regression — 2026-11-04
+- PASS: JavaScript Node syntax check
+- PASS: 3 viewport screenshot UI tests using Chromium with deterministic local mock face landmarks; no page errors
+- PASS: bundled sample preview, mask debug toggle, slider interaction, stationary image metric label, persistent preview while scrolling
+- PASS: static geometry/face mask source assertions, 478-point indices range and HTML links
+- LIMIT: headless Chromium on the runner exposes neither WebGL1 nor WebGL2; therefore only Canvas 2D fallback was exercised in browser. Do not present this as GPU shader QA.
+- LIMIT: model/CDN loaded on demand; mock face does not verify MediaPipe landmark accuracy or timing on mobile devices.
+- FOLLOW-UP: run on Android Chrome and iOS Safari with webgl2 enabled, inspect skin mask around the hairline and moving faces.
 
 
 ## v0.1.6 — 피부 품질 개선 (2026-11-04)
@@ -74,27 +81,43 @@
 - BLOCKED: 로컬 Chromium/Playwright 페이지 접근 `ERR_BLOCKED_BY_ADMINISTRATOR`. WebGL2 셰이더 실제 컴파일 및 기기별 프레임 성능 미검증.
 - 다음 수동 QA: 1) v0.2.0 표시 확인 2) 샘플 사진 3) 눈 크기/얼굴 라인 0↔100 4) 배경·머리카락 유지 5) 비교선 드래그 6) 카메라 전후 전환 7) 5분 연속 FPS/발열.
 
-
-## v0.2.1 Reference Analysis QA
-- PASS: 2D 얼굴 좌표 수학 테스트(해상도/회전/입력 오류/동일 얼굴/경고), Python 정적 회귀와 Mesh Warp 테스트.
-- BLOCKED: Chromium localhost 브라우저 접근 ERR_BLOCKED_BY_ADMINISTRATOR로 실제 브라우저·GPU 확인 불가.
-- 실기기 TODO: Android/iOS 파일 업로드·촬영·face detector/CDN·0인/다인/교체·메모리 10분.
-
-
-## v0.2.2 — Reference Match QA
-- PASS: Node 신규 Reference Match 순수 수학 검증(비활성/0% 항등, 동일 얼굴 원본, 5부위 국소 변화, 배경 보호, IPD 최대 변위, 독립 부위, 4:5/1:1/16:9/미러 foldover, 잘못된 얼굴 입력).
-- PASS: 기존 Mesh Warp 및 Reference Metrics Node 테스트, Python 정적 회귀 검사.
-- FIX: GPU mesh foldover fallback에서 source UV가 정점 위치를 덮어쓰던 기존 인덱싱 오류 수정.
-- PASS: JS 구문 검사 및 새 UI/모듈 참조/버전 확인.
-- BLOCKED: Chromium localhost 접근이 ERR_BLOCKED_BY_ADMINISTRATOR로 차단되어 실제 GPU 셰이더·MediaPipe·모바일 UI 시각 QA 미실시.
-- DEVICE QA: Android Chrome, Samsung Internet, iOS Safari에서 두 이미지 독립 얼굴 분석 후 부위별 매칭, 원본 비교선, 3면 보기, 사진 교체·삭제, 5분 이상 카메라, 모델 실패 메시지 확인.
-- 의료 한계: 결과는 2D 이미지 시각화이며 실제 성형 결과를 예측하거나 보장하지 않음.
+## v0.2.1 — Reference Analysis QA
+- PASS: JS 구문 검사(main, metrics, panel), 기존 6개 Python 정적 회귀 스위트.
+- PASS: Node 메시 테스트와 새 synthetic reference geometry(해상도 800×1000 vs 1600×2000, 회전 보정, 동일 입력 비교, 잘못된 입력, 경고).
+- PASS: 주요 DOM ID, 모듈 임포트 및 파일 크기·형식/0·다인 검사 존재 여부(정적).
+- BLOCKED: Playwright Chromium 로컬 HTTP 페이지 접근 `net::ERR_BLOCKED_BY_ADMINISTRATOR`. 모바일 화면 렌더와 MediaPipe 실사용 불가.
+- DEVICE QA NEEDED: 내/참고 사진 각각 올리기, 0/2명 오류, 업로드 교체 후 이전 분석 제거, 전면 카메라 현재 프리뷰 캡처, 저장·원본 비교/메이크업, 장시간 GPU FPS.
+- INTERPRETATION: 이 분석 수치는 2D 사진의 비율이며 진단·얼굴 인식·수술 결과 예측을 위한 임상 수치가 아님.
 
 
-## v0.2.4 — Live Safe / Jawline Regression
-- PASS: node --test tests/*.test.mjs: 16 tests, 0 failed (local Node 22).
-- PASS: python tests_*.py, JS node --check 5 runtime modules (local).
-- PASS: identity on missing contour/unsafe warp, UV stretch and foldover constraints, tracking sudden jump/dropout, 4:5/1:1/16:9 and mirror.
-- BLOCKED: Playwright Chromium cannot navigate to localhost or file URL (ERR_BLOCKED_BY_ADMINISTRATOR).
-- NOT VERIFIED: Android Chrome / Samsung Internet / iOS Safari GPU compile, MediaPipe camera tracking, 10 minute FPS/thermal, live jaw silhouette visual acceptance; GitHub Actions status independent verification.
-- LIVE POLICY: geometric jaw warp disabled in camera mode pending actual device validation. Still photos support limited contour-safe warp.
+## v0.2.3 validation addendum
+- Corrected 4-component interleaved mesh UV foldover attenuation/fallback indexing.
+- Fully corrected 3-way result is rendered separately while main before/after split is retained.
+- No-WebGL2 browsers disable Reference Match controls.
+- Local Chromium localhost access: ERR_BLOCKED_BY_ADMINISTRATOR; live model/GPU QA blocked.
+
+
+## v0.2.3 QA 추가
+- 정적 코드 리뷰 기준으로 jawline artifact의 주요 원인이 face boundary 근처의 과도한 reference displacement로 판단됨.
+- 수정 후 Reference Match는 외곽선 근처에서 2차 감쇠, 내부 영역 우선, jaw 하단 추가 감쇠를 적용.
+- 실기기 라이브 카메라 GPU QA는 여전히 필요.
+
+
+## v0.2.4 — UV/Jawline/Temporal Stability QA
+- PASS: node --test tests/*.test.mjs (16 tests, 0 failures).
+- PASS: python tests_*.py 정적 회귀.
+- PASS: node --check main.v0.2.4.js, live-safety.v0.2.4.mjs, mesh-warp.v0.2.4.mjs, reference-match.v0.2.4.mjs, reference-panel.v0.2.4.mjs.
+- PASS: git blob SHA of source files matched GitHub after commit.
+- BLOCKED: Playwright Chromium local HTTP and file URL both reported ERR_BLOCKED_BY_ADMINISTRATOR.
+- NOT VERIFIED: on-device WebGL2 compile, MediaPipe tracking/face masks, real silhouette in live mode, GitHub Pages live availability.
+
+
+## v0.2.5 QA — Adaptive Quality and Long-session Robustness
+- PASS: `node --test tests/*.test.mjs` — 22 tests (16 previous mesh/ref/live safety + 6 new scheduler tests).
+- PASS: `for file in tests_*.py; do python "$file"; done` — 10 static regression scripts.
+- PASS: JS syntax checks for runtime + all 5 current modules, including v0.2.5 performance module.
+- PASS: source version/import consistency and duplicated DOM ID checks, reference features preserved.
+- BLOCKED: Chromium cannot load localhost (`net::ERR_BLOCKED_BY_ADMINISTRATOR`) in this execution environment; NO browser visual, WebGL GPU or real camera verification.
+- NOT MEASURED: 5/10/30-minute live run, thermal/battery consumption, frame-time profile on Android/iOS, reference-match real GPU visual QA.
+- REQUIRED MANUAL: app v0.2.5 displayed; sample portrait original-vs-correction jaw has no tears; camera 10 minutes auto mode, turn head/rapid movement, camera flip, photo switch during permission; photo PNG export; manual profile modes; background/resume.
+- The FPS figure in UI is the measured displayed frame rate. Profile budgets are target caps, not a guarantee.

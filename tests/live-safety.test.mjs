@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createLiveFaceFilter,validateLiveFace} from '../live-safety.v0.2.4.mjs';
-import {createWarpGrid,updateWarpGrid,warpPoint,checkWarpStretch} from '../mesh-warp.v0.2.4.mjs';
-import {FACE_OUTLINE_IDS} from '../mesh-warp.v0.2.4.mjs';
+import {createLiveFaceFilter,validateLiveFace} from '../live-safety.v0.2.5.mjs';
+import {createWarpGrid,updateWarpGrid,warpPoint,checkWarpStretch} from '../mesh-warp.v0.2.5.mjs';
+import {FACE_OUTLINE_IDS} from '../mesh-warp.v0.2.5.mjs';
 
 function face(dx=0){
   const p=Array.from({length:478},(_,i)=>({x:.5+dx,y:.5}));
@@ -37,6 +37,9 @@ test('face jump, invalid coordinates and large scale change fail closed',()=>{
  assert.equal(filter.update(bad,600).safe,false);
  const huge=face();huge[234].x=.01;huge[454].x=.98;
  assert.equal(filter.update(huge,700).safe,false);
+ const chinFilter=createLiveFaceFilter();chinFilter.update(face(),100);chinFilter.update(face(.001),200);
+ const unstable=face();unstable[152].x+=.18;
+ assert.equal(chinFilter.update(unstable,300).safe,false,'isolated chin landmark jump must be rejected');
 });
 test('mesh never applies warp outside its contour, nor without contours',()=>{
  const {outline,small}=params();

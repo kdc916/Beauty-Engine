@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {createWarpGrid,updateWarpGrid,warpPoint,FACE_OUTLINE_IDS} from '../mesh-warp.v0.2.4.mjs';
+import {createWarpGrid,updateWarpGrid,warpPoint,FACE_OUTLINE_IDS} from '../mesh-warp.v0.2.5.mjs';
 
 const face=Array.from({length:13},()=>({x:.51,y:.5}));
 Object.assign(face,{

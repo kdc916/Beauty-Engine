@@ -1,6 +1,6 @@
 # maxVFX Beauty Engine — 누적 인수인계
 
-## v0.1.0 / 2026-11-04
+## v0.1.1 / 2026-11-04
 
 ### 목표
 PC와 모바일 브라우저의 카메라에서 화사한 중국식 뷰티 필터 MVP 검증. GitHub Pages 업로드를 위한 정적 HTML/JS 프로젝트 제공.
@@ -40,48 +40,81 @@ PC와 모바일 브라우저의 카메라에서 화사한 중국식 뷰티 필�
 - GitHub 저장소 주소는 사용자가 업로드 후 전달 예정. 전달받은 주소를 공식 패치 원본으로 사용.
 
 
-## v0.1.1 — 모바일 보정 화면 왜곡 수정 (2026-11-04)
-- 원인: mapEyes()가 화면 비율로 보정한 거리 벡터를 텍스처 UV 위치 계산에 재사용해 얼굴 및 배경이 늘어남.
-- 수정: 거리 계산용 metric 벡터와 원본 UV 변위 d를 분리. 보정 범위 밖에서는 원본 UV 유지.
-- 변경 파일: main.js, index.html.
-- 확인: JavaScript 구문 검사 통과. 실제 Android 모바일 화면 재검증 필요.
+## v0.1.1 — Android 보정 화면 왜곡 수정 (2026-11-04)
+- 원인: `mapEyes()`에서 화면 종횡비로 조정한 거리 벡터를 텍스처 UV 위치에 그대로 재사용해, 보정 영역 외부까지 좌표가 변형됨.
+- 수정: 왜곡 계산에는 `metric` 벡터, 텍스처 UV 좌표 복원에는 원래 `d` 벡터를 사용. 눈 확대 강도가 0이면 항상 입력 UV와 동일하게 복귀.
+- 영향을 받는 파일: `main.js`, `index.html`, 문서.
+- QA: `node --check main.js` 통과. Android 실기기 비교 테스트는 사용자 재확인 필요.
+- GitHub: https://github.com/kdc916/Beauty-Engine
+- 후속 작업: 화면 비율 및 랜드마크 좌표계 통합 테스트, 모델 추적 안정화.
 
 
 ## v0.1.2 — 보정 화면 전역 확대 재발 방지 (2026-11-04)
-- 사용자 1122×1402 테스트 이미지의 스크린샷 특징점을 원본 이미지와 대조. 보정 영역의 상단 머리카락 특징점 x 간격은 원본 대비 약 1.56배.
-- 이전 셰이더는 두 눈 처리에서 UV 가로좌표에 aspect ratio 약 0.8을 각 1회씩 적용하는 오류. 이 때문에 얼굴 밖 전체가 약 1/(0.8²) = 1.56배 가로 확대됨.
-- v0.1.1 소스에는 수정이 존재하지만 모바일 스크린샷은 예전 결과를 보임. 이전 main.js 브라우저 캐시가 남았을 가능성이 높음(실제 캐시 파일 확인 불가).
-- src=main.v0.1.2.js로 자산 URL 변경. 이전 파일 캐시를 확실히 회피.
-- mapEyes()는 반경 밖/강도 0에서 원본 UV를 그대로 반환하며, 화면 비율은 영향 반경 계산에만 사용.
-- 얼굴 슬림 워프는 하안면에만 제한하여 머리카락/배경이 휘는 현상 억제.
-- 비교선은 canvas 표시 영역을 기준으로 산정. WebGLRenderingContext를 canvas로 잘못 참조하던 버그 수정.
-- QA: Node 구문 검사, 4:5/1:1/16:9 UV 수학 회귀 테스트 통과. Chromium/Playwright 실제 브라우저 접근은 보안 정책(ERR_BLOCKED_BY_ADMINISTRATOR)으로 차단. 모바일 실기기 QA 필요.
-- 다음 단계: 모바일에서 v0.1.2 버전 확인 후 동일 이미지로 머리카락/눈 비교. 오류 재현 시 새 스크린샷 기준 조사.
+- 실제 테스트 스크린샷과 같은 1122x1402 원본을 비교: 원본 좌측은 99% 이상 같은 픽셀 분포, 우측은 얼굴/머리/배경 전체 위치가 달라짐. 단순 CSS stretching 아님.
+- 구 v0.1.0 `mapEyes()`가 x UV를 가로세로 비율 0.8로 스케일한 상태에서 두 눈 순차 적용 → 안면 밖에서도 .8²=.64배 샘플링, 외관상 약 1.56배 확대되는 결정적 버그.
+- v0.1.1 소스에는 함수 수정이 있었으나 모바일에서 유사 증상이 계속 재현. v0.1.1 HTML만 최신이고 JS는 오래된 캐시일 가능성이 높으며 실제 캐시 상태까지 확인되지는 않음.
+- 수정: main.js를 versioned asset `main.v0.1.2.js`로 교체해 URL 변경으로 캐시 강제 갱신. 셰이더는 눈 영향 반경 밖에서 무조건 원래 UV를 반환하도록 변경.
+- 얼굴 슬림 워프를 하안면 부분으로 제한하여 머리카락/배경이 당겨지는 현상 억제.
+- 비교선 좌표 계산에서 WebGLRenderingContext에 width/height 접근하던 버그 수정. 실제 canvas element와 contain 렌더영역으로 계산.
+- 코드/실험: UV 수학 회귀 검사 PASS. Chromium/Playwright 실제 WebGL2 검증은 환경 보안 정책으로 접근 차단. 스마트폰 브라우저 실제 접속 QA 필요.
+- 핵심 소스: `main.v0.1.2.js`. 다음 릴리스도 새 런타임 경로 사용하여 캐시 재발 차단.
 
 
-## v0.1.3 — 샘플 테스트 및 동시 보정 UI (2026-11-04)
-- 생성된 이전 샘플 인물 사진을 360×450 WebP로 최적화하여 `assets/sample-portrait.webp`에 번들링. Git blob SHA: `30e063c5c138d31c534a00a3febc3bcc84b03d84`.
-- `main.v0.1.3.js`: `loadBundledSample()` 자동 실행, 시작 시 비교 모드 ON, 입력 소스 3종 전환 및 미러 상태 반영. Canvas2D fallback 비교 추가.
-- `index.html`: 샘플/카메라/사진 버튼, v0.1.3 CSS/JS 경로와 사용 안내 수정.
-- `styles.css`: 모바일 100dvh 48:52 2행 구성, 상단 프리뷰 고정 및 하단 overflow-y:auto. grid align-items:stretch, 자식 height:100% 필수. 가로 방향 2열 배치.
-- QA: Node 구문, 정적 테스트, Chromium set_content 390×844 / 360×667 / 820×390 / 1280×800 레이아웃 성공. 브라우저 JS 주입에서 SAMPLE PHOTO 시작, 비교 ON, 스크롤 중 프리뷰 고정 확인.
-- 제한: 헤드리스 WebGL2 미지원, 미디어파이프 CDN 모델/실기기 카메라 검증 미완료. 네트워크 경유 실제 페이지 접속은 정책 차단.
-- 다음: 실제 Android Chrome에서 얼굴 탐지 상태, 프리셋 적용, 가로보기, 카메라 권한 및 키보드/주소창 높이 변경 테스트.
-- 공식 저장소: https://github.com/kdc916/Beauty-Engine
+## v0.1.3 — 샘플 자동 실행 + 실시간 동시 보정 UI (2026-11-04)
+### 요구 사항
+- 직전에 생성한 인물 테스트 사진을 앱에서 바로 불러오고 카메라/사용자 사진과 전환.
+- 모바일에서 보정 슬라이더를 내릴 때 얼굴 프리뷰가 사라지지 않도록 개선.
+
+### 변경
+- `assets/sample-portrait.webp`: 생성했던 테스트 인물의 360×450 경량 WebP (6,752 bytes), 외부 호스팅 불필요.
+- `main.v0.1.3.js`: 시작 즉시 `loadBundledSample()` → `activate()` / `showCompare(true)` / `startTracking()` 호출; 입력 소스 3종 전환 상태 및 미러/모드 처리. Canvas2D 원본/보정 비교를 실장.
+- `index.html`: 상단 샘플/카메라/사진 소스 전환, 버전, 도움말 업데이트.
+- `styles.css`: 모바일 `100dvh` 기반 48:52 영역 분리, 상단 프리뷰 유지와 하단 `overflow-y:auto`; 2단 가로보기 및 기존 PC 레이아웃 유지. CSS 자식 요소 stretch/height:100%가 중요.
+- `tests_mobile_layout.py`: 화면 구성, 소스/에셋, versioned 자원 정적 회귀.
+
+### 테스트 / 확인
+- Node JS 구문: PASS. `tests_geometry.py`, `tests_mobile_layout.py`: PASS.
+- Chromium `page.set_content`으로 390×844, 360×667, 820×390, 1280×800 CSS 프리뷰와 패널 배치 확인. 모바일에서 페이지 전체 스크롤 없고 패널만 스크롤됨.
+- JS 인라인 주입으로 샘플 자동 시작, 비교 UI 표시, 슬라이더 패널 스크롤 후 프리뷰 위치 유지 확인.
+- HEADLESS Chromium에서는 WebGL2 미지원으로 Canvas2D fallback 실행. 모바일 WebGL2 및 MediaPipe 모델 정상 구동은 실제 기기에서 확인 필요.
+- Chromium 로컬 HTTP 네비게이션은 정책상 ERR_BLOCKED_BY_ADMINISTRATOR. `page.set_content`로 UI 런타임을 대체 검증했지만 GitHub Pages 엔드투엔드 테스트 완료로 간주하지 않음.
+
+### 다음 작업
+1. Android Chrome, Samsung Internet 기종별 실기기 QA; 특히 주소창 확장/축소 때 동적 100dvh 동작.
+2. 모델 다운로드/얼굴 추적 성공 후 얼굴형·립·블러셔 영역이 샘플에서 정확히 작동하는지 확인.
+3. Canvas2D fallback GPU 모드와 품질 차이 명확히 안내.
+4. 멀티샘플, 고해상도 테스트 패널과 기본 피부 보정 품질 개선.
+
+GitHub: https://github.com/kdc916/Beauty-Engine
+Pages: https://kdc916.github.io/Beauty-Engine/ (외부 배포 상태는 별도 확인 필요)
 
 
-## v0.1.4 — 피부 마스크 정확도 및 사진 렌더링 최적화 (2026-11-04)
-- GitHub: https://github.com/kdc916/Beauty-Engine
-- 주요 코드: `main.v0.1.4.js`; 기존 v0.1.3 실행 파일은 유지하되 index.html에서는 새 캐시 버전으로 연결.
-- 얼굴 윤곽 36개, 눈·눈썹·입술 랜드마크로 피부 mask Canvas 생성 (최대변 256px).
-- WebGL2 uSkinMask 텍스처에서 참조; 블러 이웃 픽셀에도 피부 가중치를 곱해 경계 번짐 감소.
-- 보정 패널 하단 '피부 마스크 확인' 버튼에서 녹색 오버레이 진단 가능(WebGL2 전용).
-- 샘플/사진은 파라미터 변경·비교 조작·얼굴 분석 갱신 시에만 재렌더.
-- 소스 전환 중 이전 MediaPipe 분석이 늦게 반환되면 sourceGeneration 검사를 통해 결과 폐기.
-- 유지: 3가지 프리셋, 샘플 인물, 모바일 고정 프리뷰 및 독립 스크롤, 사진/카메라 전환.
-- QA: JS 구문 및 정적 회귀 PASS; Chromium 390×844, 360×667, 1280×800의 Canvas 2D fallback에서 프리뷰 고정·슬라이더·마스크 버튼 기능 PASS.
-- 미검증: 실제 GPU WebGL2 셰이더 구동, MediaPipe 모델 실사용, Android Chrome/iOS Safari 실기기.
-- 다음 v0.1.5: 헤어라인 마스크 QA, 립/블러셔 메시 정밀화, FPS/GPU 프로파일러.
+## v0.1.4 — 얼굴 피부 마스크 및 정지 프레임 최적화 (2026-11-04)
+**GitHub 공식 저장소:** https://github.com/kdc916/Beauty-Engine
+
+### 구현
+- JS 엔트리: `main.v0.1.4.js`, HTML: `index.html`, CSS: `styles.css`
+- MediaPipe Face Landmarker 478개 정규화 좌표 중 얼굴 외곽선 36개, 양안/눈썹/입술 특징점 기반의 캔버스 마스크를 생성
+- 마스크는 256px 최대변에서 작성하여 WebGL2 추가 텍스처(uSkinMask)에 업로드; 데이터는 브라우저 내 처리
+- 기존 타원형 피부 마스크 교체. 피부 스무딩 이웃 샘플은 추가 마스크 가중치 적용
+- 피부 영역 디버그: 보정 패널 하단 `▦ 피부 마스크 확인` 버튼으로 녹색 오버레이 토글
+- 정지 이미지/샘플 프리뷰는 invalidation 때만 draw() 호출; 카메라만 지속 RAF 처리
+- 사진 교체/샘플 전환 시 이전 얼굴 추적 결과를 sourceGeneration 토큰으로 무효화
+- UI: 고정 프리뷰 + 독립 스크롤과 기본 샘플, 3개 프리셋, 비교 기능 유지
+
+### QA
+- `node --check main.v0.1.4.js` PASS
+- `python tests_geometry.py` PASS
+- `python tests_mobile_layout.py` PASS
+- `python tests_skin_mask.py` PASS
+- Playwright Chromium 390x844, 360x667, 1280x800: 샘플 자동 진입/마스크 버튼/슬라이더/프리뷰 고정/PAGE ERROR 없음. GPU WebGL2는 테스트 환경에서 비활성화되어 Canvas 2D 폴백으로 검증.
+- 남은 항목: 실제 Android Chrome의 WebGL2 shader 컴파일, MediaPipe 실인물 검출과 마스크 시각 QA, 영상 장시간 안정성.
+
+### 다음 패치 v0.1.5 후보
+1. Android 실기기 스크린샷 기반 눈썹/헤어라인 마스크 개선 및 피부 텍스처 보존
+2. 타원형 블러셔/입술 마스크를 FaceMesh 폴리곤으로 전환
+3. 프레임 프로파일러 및 GPU 비용 측정, 저사양 품질 단계
+4. 색감 프리셋의 피부 밝기·혈색·화이트밸런스 분리
 
 
 ## v0.1.5 (2026-11-04)
@@ -91,15 +124,15 @@ PC와 모바일 브라우저의 카메라에서 화사한 중국식 뷰티 필�
 - UI/UX: 모바일 고정 프리뷰, 샘플 인물, 비교 UI 유지.
 - 남은 작업: Android/iOS Safari GPU 실기기 확인, 측면 얼굴/입을 크게 벌린 표정 QA, GPU 프로파일링.
 
-
-## 2026-11-04 — 로드맵 v1.1 개정 (앱 v0.1.5 유지)
-- 사용자 요청: 내 얼굴 사진 + 원하는 인물 참고 사진 분석 → 부분적인 얼굴 스타일 매칭; 이후 상담용 가상 시각화.
-- 새 계획: v0.2.0 Mesh Warp 코어, v0.2.1 2장 분석, v0.2.2 Reference Match/3면 비교, v0.2.3 QA, v0.3.1 상담용 시각화, v0.3.2 3D 근사 연구.
-- 신규 문서: docs/ROADMAP.md, docs/REFERENCE_MATCH_DESIGN.md, docs/QA_REFERENCE_MATCH.md, schemas/reference-match-config.schema.json, examples/reference-match-preset.json, tests_reference_docs.py.
-- 프리셋에는 이미지/랜드마크/신원 정보 저장 금지. 상담 결과는 '실제 수술 결과를 예측하거나 보장하지 않습니다' 고지.
-- **실행 코드(index.html, main.v0.1.5.js, styles.css) 변경 없음.** Reference Match 및 Surgery Preview는 아직 미구현.
-- 검증: JSON/문서 구조 테스트, GitHub 파일 반영 확인. 실제 얼굴 매칭/상담 시뮬레이션 QA는 향후 수행.
-- 다음 실제 앱 패치: v0.1.6 피부결·눈 밑·하이라이트 보정 안정화 후 v0.2.0 메시 Warp 작업.
+## 2026-11-04 — 로드맵 개정 (앱 버전 v0.1.5 유지)
+- 사용자 요청: 사용자 사진 + 참고 인물 사진을 활용한 부위별 닮은꼴/스타일 보정, 추후 상담용 가상 외형 시각화.
+- 계획 반영: v0.2.0 국소 Mesh Warp → v0.2.1 이미지 2장 분석 → v0.2.3 Reference Match 및 3면 비교 → v0.2.3 QA; v0.3.1 상담용 가상 외형 시각화 → v0.3.2 3D 근사 연구.
+- 신규: `docs/ROADMAP.md`, `docs/REFERENCE_MATCH_DESIGN.md`, `docs/QA_REFERENCE_MATCH.md`, `schemas/reference-match-config.schema.json`, `examples/reference-match-preset.json`, `tests_reference_docs.py`.
+- 현재 런타임 불변: `index.html` 및 `main.v0.1.5.js`, `styles.css`, 기존 모바일 프리뷰/샘플과 필터 기능을 수정하지 않음.
+- 보안: 본인/참고 얼굴 이미지는 기본적으로 메모리/기기 내 처리; 얼굴 이미지·랜드마크·신원 정보는 프리셋 저장 금지.
+- 의료 고지: `상담용 이미지 시뮬레이션 · 실제 수술 결과를 예측하거나 보장하지 않습니다.` 항상 표시/출력. 임상 타당성 미검증.
+- QA: 스키마·문서 정합성 자동 검사 통과. Reference Match 실 기능 및 의료 예측 검증 **미구현/미수행**.
+- 다음 실제 개발 패치: v0.1.6 피부·눈 밑·하이라이트 품질 개선 후 v0.2.0부터 Mesh Warp 작업.
 
 
 ## v0.1.6 — 피부 보정 품질 및 프리셋 복원 수정 (2026-11-04)
@@ -139,52 +172,89 @@ PC와 모바일 브라우저의 카메라에서 화사한 중국식 뷰티 필�
 ### 지속 QA
 - `.github/workflows/qa.yml`: main 푸시/PR마다 Node 22 JS 구문, Mesh Warp 동적 테스트, Python 3.11 회귀 6개 자동 실행하도록 설정. GitHub Actions 워크플로의 실제 첫 실행 성공 여부는 미확인.
 
-
-## v0.2.1 Reference Analysis (2026-11-04)
-- 신규: reference-panel.v0.2.1.mjs (두 이미지 입력·삭제·현재 프리뷰 캡처·독립 IMAGE 추론·세대 번호 검사·ObjectURL 정리).
-- 신규: reference-metrics.v0.2.1.mjs (IPD/roll 정규화, 8가지 얼굴 비율, 각도·표정 경고).
-- index.html/main.v0.2.1.js/styles.css: UI·모듈 연동; 기존 모바일 고정 프리뷰, Mesh Warp, 뷰티 기능 유지.
-- 신규 회귀: tests/reference-metrics.test.mjs, tests_reference_analysis.py.
-- 실제 모바일 MediaPipe/GPU·카메라 경로는 미검증. v0.2.2는 부위별 변형과 3면 비교.
-
-
-## v0.2.2 — Reference Match 1차 구현 (2026-11-04)
-### 실행 경로
-- index.html → main.v0.2.2.js (버전별 신규 JS로 모바일 캐시 무효화)
-- main.v0.2.2.js → reference-panel.v0.2.2.mjs, reference-match.v0.2.2.mjs, mesh-warp.v0.2.2.mjs
-- reference-panel은 기존 reference-metrics.v0.2.1.mjs 재사용
-### 구현
-- 사용자 얼굴과 참고 사진의 IMAGE 랜드마크를 IPD/roll 정규 좌표로 정렬. 5부위(눈/코/입술/턱/눈썹) 국소 역매핑을 메시 UV에 합성.
-- 부위별 강도/전체 강도, 비활성화 시 항등, 외곽 이외 원본 유지, IPD 8% 최대 변위(마케팅/의학 수치 아님).
-- 3면 비교(원본 사진/참고 사진/보정). 메인 전후 비교가 켜져 있어도 결과 카드는 전체 보정 프레임.
-- 내 사진 파일 업로드/현재 프리뷰 캡처 시 메인 프리뷰에도 같은 입력 적용, 외부 소스 전환 시 이전 매칭 source 무효화.
-- WebGL2 미지원 시 2D Reference Match 스위치 비활성화. 원본 사진/분석 좌표는 메모리에서만 보관.
-### 수정된 기존 오류
-- mesh-warp.v0.2.0.mjs의 foldover 감쇠/항등 복원 코드에서 `vertices[i*2+2]`로 정점 위치를 덮어쓰던 인덱싱 오류 수정. v0.2.2는 `vertices[v*4+2]`, `vertices[v*4+3]` 사용.
-### 검증 및 남은 리스크
-- Node 메시 정점/미러/종횡비/고유 영역/강도 제한 11 테스트, Python 정적 회귀 검사 수행.
-- 실제 Android/iOS WebGL2 / MediaPipe CDN 로딩 / 스마트폰 GPU 60fps / 밝기·색감 품질은 환경 정책으로 미검증.
-- 본 기능은 인물 스타일의 2D 가상 보정이며 특정 수술의 실제 결과를 예측하거나 보장하지 않습니다.
-### 다음 작업
-- v0.2.3: 다양한 표정·측면·촬영각도 테스트, reference A/B, 비교 패널 동기 확대, 모바일 GPU 성능 프로파일링.
+## v0.2.1 — Reference Photo Face Analysis (2026-11-04)
+### 완료
+- `index.html`: 모바일 고정 프리뷰 아래 독립 스크롤 패널에 참고 얼굴 분석 `<details>` 카드 추가. 내 사진/참고 인물 사진 각각 업로드·삭제, 현재 프리뷰 캡처, 썸네일, 상태 및 8항목 결과.
+- `reference-metrics.v0.2.1.mjs`: 픽셀 좌표/IPD/roll 정규화. 눈·눈 뜨임·눈썹·콧방울·입술·턱 비율 비교, 포즈/표정/작은 얼굴 경고. 2D 외형 수치로만 사용.
+- `reference-panel.v0.2.1.mjs`: 별도 MediaPipe IMAGE 인스턴스(최대 3얼굴 검출), lazy 로드/CPU, 메모리 전용 사진 처리, 연속 업로드 경쟁 방지 및 ObjectURL 정리. 사진은 localStorage에 기록하지 않음.
+- `main.v0.2.1.js`: reference panel 연결, 기존 메쉬 `mesh-warp.v0.2.0.mjs` 유지, Soft Portrait의 saturation 4 → 46 오타 수정.
+- `styles.css`: reference 카드·결과표·모바일 UI 추가, 기존 고정 프리뷰 유지.
+### 검증 / 한계
+- Node 문법, 기존 메쉬 및 새 synthetic 얼굴 비율 테스트, Python 정적 QA 통과. 실제 브라우저 이동은 `ERR_BLOCKED_BY_ADMINISTRATOR`, MediaPipe 외부 모델 및 실제 Android/iOS WebGL2 QA 미완료.
+- 동일인 인식, 진짜 성형 결과 예측, 사진 기반 얼굴 자동 Warp 미구현. 사진은 부위별 비율만 분석하며 다음 v0.2.2에서 매칭 변형 예정.
+- MediaPipe의 외부 CDN/모델을 다운로드하고 모듈 사용 통계를 전달할 수 있으므로 개인정보 고지 검토가 필요.
+### 다음 단계
+- v0.2.2: reference metrics → Face Mesh 변형 제한 및 부위별 매칭, 0% 원본 보장, 3면 비교, 모바일 성능·실기기 QA.
 
 
-## v0.2.4 — 턱선 UV Artifact 및 라이브 안정화 (2026-11-04)
-### 이슈 및 누락된 배포
-- 사용자 스크린샷: 원본/보정 화면의 오른쪽 턱선이 찢어진 패치처럼 나타남.
-- **중요:** v0.2.3 수정은 ZIP으로만 제공되고 GitHub에는 반영되지 않아 공개 웹앱은 v0.2.2에서 멈춰 있었음. v0.2.4에서 코드·진입점·스타일·CI 직접 업데이트.
-- 기존 v0.2.3은 Reference Match만 수정해 기본 얼굴 라인(Slim) 변형으로 발생하는 깨짐을 충분히 해결하지 못함.
-### 수정 기술 내용
-- mesh-warp.v0.2.4.mjs: 턱선 ROI를 얼굴 내부 볼로 제한하고 턱 끝/목/외곽에서 강한 feather 감쇠. 윤곽 불일치 시 변형 해제.
-- reference-match.v0.2.4.mjs: v0.2.3의 경계 보호·중심부 우선 변형 통합; 턱 및 최대 변위 강도 보수화.
-- checkWarpStretch: 4,161 정점의 인접 UV edge 길이 비율 0.80..1.20 및 삼각형 flip 검사, 9단계 0.5 배 감쇠 후 비정상 시 전체 항등 좌표로 복귀.
-- mesh.baseUV/mesh.deltaUV는 생성 시 TypedArray 선할당하여 반복 프레임 할당 억제.
-- live-safety.v0.2.4.mjs: 유효 랜드마크·얼굴 크기·급격한 위치/크기 변화 검사, 움직임 적응형 EMA. 2프레임 안정화 전 변형 금지.
-- main.v0.2.4.js: live camera slim=0, eye effect<=0.18. 추적 미검출/오류 시 기존 얼굴 메시/마스크 중지. 사진은 내부 경계 보호 메시 유지.
-- reference-panel.v0.2.4.mjs: 전체 35%, 턱 25%, 최대 IPD 6% 기본값.
-- UI: Live Safe 배지 및 v0.2.4 신규 파일 자산 캐시 회피; 기존 모바일 고정 프리뷰·샘플·3면 비교 유지.
-### 검증·미해결
-- Node 동적 수학 테스트 16개 통과(얼굴 좌표 점프, 미검출, 4:5/1:1/16:9, 좌우 미러, UV stress/foldover/항등).
-- Python 정적 회귀, JavaScript node --check, GitHub 소스 SHA 확인.
-- Chromium localhost/file: ERR_BLOCKED_BY_ADMINISTRATOR. Android/iOS 실기기 GPU 출력과 GitHub Pages 공개 여부는 미검증.
-- 신뢰성 확보 전에는 라이브 턱선 변형을 중지하는 것이 우선 정책. 다음에는 실기기 QA 데이터를 바탕으로 안전 모드를 점진 개선.
+## v0.2.2 — Reference Match (2026-11-04)
+- v0.2.1 두 사진 IMAGE 분석 결과와 v0.2.0 Face Mesh Warp를 연결해 실제 GPU 국소 변형 지원.
+- `reference-match.v0.2.2.mjs`: 양측 IPD·roll 정규화, 눈/코/입술/턱/눈썹 앵커별 이동량 제한, 윤곽 외 항등, 부위별 강도, 최대 변위 제한.
+- `mesh-warp.v0.2.2.mjs`: 기존 Eye/Slim inverse UV에 참고 얼굴 부위별 변위를 합성, 기존 삼각형 뒤집힘 검사 및 강도 감쇠 유지.
+- `reference-panel.v0.2.2.mjs`: 전체/부위 강도, 매칭 ON/OFF, 3면 비교, 사진 교체 및 분석 결과 초기화. 사진·좌표는 메모리에서만 사용. JSON 프리셋에는 저장하지 않음.
+- `main.v0.2.2.js`: '내 사진'을 선택하면 같은 사진을 메인 프리뷰에 표시하고 기존 피부/메이크업 유지. 사진/샘플/카메라 전환 시 기존 매칭 소스 초기화.
+- GPU WebGL2 미지원 폴백에서는 참고 얼굴 기하 변형 미지원, 안내 표시. 실제 사진 매칭과 3D 수술 후 예측은 다른 기능임.
+- QA: JS 문법·Node 메시/매칭 수학 및 기존 Python 회귀 검사. Android/iOS 실기기 MediaPipe/GPU는 미검증.
+- 다음 v0.2.3: 부위별 포즈/표정 QA, 3면 확대 동기화, 좌우/측면 및 GPU 성능 검증.
+
+- 추가 수정: main/reference-panel에서 실시간 추적 준비 전에도 독립 IMAGE 분석 결과의 얼굴 외곽으로 매칭 가능, 단 WebGL2 필요.
+- 추가 수정: 3면 보기 결과는 별도 전체 보정 프레임(메인 비교선과 분리).
+
+
+## v0.2.3 — 턱선 깨짐 수정 및 라이브 안전화 (2026-11-04)
+- 사용자 제보: 보정된 오른쪽 턱선이 깨져 보이는 artifact 발생. 라이브 사용 불가 수준.
+- 원인 판단: Reference Match 변형이 face oval 경계에 너무 가까이 적용되며, jaw 부위가 외곽선을 직접 당겨 배경과의 경계가 찢어져 보임.
+- 수정: reference-match.v0.2.3.mjs에서 외곽 feather 확대, contourSafety(border^2), interiorSafety(중심부 우선), jaw 하단 감쇠, 기본 global/jaw 강도 및 maxDisplacementIPD 축소.
+- mesh-warp.v0.2.3.mjs에서 reference delta를 0.92 배로 완화.
+- 기대 효과: 턱선/볼 윤곽 보정은 유지하되, 턱 아래/볼 바깥 경계 파손 방지. 라이브 안정성 우선.
+- 남은 과제: 실제 Android/iOS 라이브 카메라에서 장시간 테스트, 다양한 헤어스타일/측면 포즈 검증.
+
+
+## v0.2.4 — LIVE SAFE / 턱선 깨짐 우선 차단 (2026-11-04)
+### 문제와 원인
+- 사용자 스크린샷: 원본/보정 수직 비교의 오른쪽 턱 옆에 깨진 듯한 패치/경계 불연속이 나타남.
+- v0.2.3 ZIP은 GitHub에 커밋되지 않아 Pages는 v0.2.2를 표시하고 있었음.
+- 기존 수정은 참고 인물 매칭 윤곽에만 집중. 기본 face slim도 외곽에 가우시안 변위가 걸려 턱/목 경계 찢김을 만들 수 있었음.
+### 변경
+- mesh-warp.v0.2.4.mjs: 기본 jaw warp를 얼굴 내부 볼 부위로 국한, 경계 feather 4차 감쇠; 얼굴 외곽 누락 시 항등 변형.
+- checkWarpStretch: 모든 격자 이웃의 UV edge scaling을 0.80~1.20 범위로 검사. 미달/초과 또는 삼각형 뒤집힘 발생 시 전체 변위를 단계적으로 낮추고 최후 identity fallback.
+- mesh.baseUV/mesh.deltaUV TypedArray 재사용으로 매 프레임 새 버퍼 할당 감소.
+- live-safety.v0.2.4.mjs: 478-point 랜드마크 유효성, 얼굴 크기, 급격한 모션/크기 변화, EMA 안정화. 정상 2프레임 전에는 얼굴 변형 중지.
+- main.v0.2.4.js: 카메라 모드에서 기본 턱 변형 비활성화, 눈 보정 상한 0.18; 정상 추적이 끊기면 피부 마스크/메시를 무효화하고 자동 원본 복구. 사진 모드는 안전한 메시 얼굴형 변형을 계속 지원.
+- reference-match.v0.2.4.mjs: v0.2.3 경계 감쇠 통합, 윤곽 보존.
+- reference-panel.v0.2.4.mjs: 안전 강도 기본값 35%, 턱 25%, 변위 한도 6% IPD.
+- index.html: Live Safe 배지와 버전별 정적 에셋 무효화. 모바일 프리뷰 고정 유지.
+### 완료 및 남은 QA
+- PASS: Node 16개 테스트(랜드마크 급변·유실, 4:5/1:1/16:9, 좌우 반전, background identity, UV stretch/foldover).
+- PASS: 정적 회귀 9개, JS 구문, ZIP 무결성.
+- 미검증: Android/Samsung Internet/iOS Safari에서 5~10분 카메라, GPU 실제 렌더, 원본/보정 턱선 비교, 온도와 FPS.
+- 프로덕션 수준에서 '절대 깨지지 않음'을 아직 보장할 수 없음; 라이브는 안전 우선으로 일부 형태 변형을 중단.
+### 향후 v0.2.5
+- 실제 디바이스 동영상 QA 이후 Live Safe 자동 복원 경계/시각적 전환 점진적 개선, 3면 UI, A/B 레퍼런스, 성능 측정.
+
+
+## v0.2.5 — Adaptive Live Performance & Long-session Guard (2026-11-04)
+### 작업 정책
+- 사용자 요청에 따라 **이번 버전부터 GitHub에 직접 커밋하지 않는다.** ZIP의 최상위 `index.html`부터 저장소 루트로 사용자가 업로드한다.
+- 원본 기준: v0.2.4 전체 패키지. v0.2.5 코드는 별도 신규 엔트리 파일이며 이전 버전 코드는 회귀/롤백용으로 패키지에 보존한다.
+### 주요 변경
+1. `live-performance.v0.2.5.mjs` (NEW): Auto/Quality/Balanced/Performance/Battery 모드. 자동 모드는 균형(768px·30fps), 지속적인 처리 지연 시 단계적으로 640px/24fps, 512px/20fps로 강등. 3.6초 이상 샘플 구간, 연속 악화 2회/호전 3회, 6.5초 이상 tier 쿨다운. 안정 복귀는 균형 단계까지만 수행.
+2. `main.v0.2.5.js` (NEW): 라이브 렌더링 간격/얼굴 감지 주기/피부 마스크 갱신 주기 제한. 추적 처리 비용을 관측하고 성능 프로파일 업데이트.
+3. `uploadSourceTexture()` 새 함수: 고정 크기의 HTMLVideoElement는 `texImage2D` 초기 1회 + 이후 `texSubImage2D`. 같은 정지 사진은 렌더 반복 시 재업로드하지 않음.
+4. `uploadMaskTexture()` 재작업: 피부/메이크업 Canvas 동일 크기 재업로드에 `texSubImage2D` 사용, 크기 변경에만 `texImage2D`; blank 1px 데이터 재사용.
+5. 카메라 권한 승인 지연 중 사진 전환/샘플 전환 시 generation 확인으로 늦은 getUserMedia 결과 폐기. 탭 숨김/복귀 시 시간 필터 리셋 및 라이브 메시 항등 복구.
+6. WebGL contextlost 시 Canvas2D 폴백을 표시하고, contextrestored 시 shader/VBO/IBO/텍스처 초기화 및 사진 마스크를 다시 생성.
+7. index/styles: 품질 선택 UI를 스크롤 가능 보정 패널 안에 추가. 샘플 인물·기존 상단 고정 프리뷰 유지.
+8. `.github/workflows/qa.yml`: 신규 v0.2.5 JS 모듈 및 전체 Node/Python 테스트를 검사하도록 갱신(업로드 후 GitHub Actions 사용).
+### 유지/호환
+- `live-safety.v0.2.5.mjs`, `mesh-warp.v0.2.5.mjs`, `reference-match.v0.2.5.mjs`, `reference-panel.v0.2.5.mjs`는 v0.2.4의 안전한 동작 로직을 유지하면서 import/버전만 갱신.
+- LocalStorage `maxvfx.beauty.v0.1.preferences` 재사용 + `liveQuality` 옵션만 추가해 이전 사용자 프리셋 복원 호환.
+- Reference Match/3면/Live Safe 턱선 보호 및 모바일 상단 프리뷰 유지. 실제 성형 수술 결과 예측 모드는 미구현.
+### 테스트 결과
+- Node 동적 테스트 22개 PASS (기존 16 + 신규 live-performance 6).
+- Python 정적 회귀 테스트 10개 PASS.
+- 필수 JS/mjs 구문 검사 PASS, HTML id/모듈 import/파일 구조 점검 및 ZIP 무결성 검사.
+- Chromium local server 접근 `ERR_BLOCKED_BY_ADMINISTRATOR` → 화면 실측/MediaPipe GPU/Android/iOS/발열/배터리 미검증. 실제 10분 라이브 검증 필요.
+### 이어받기 / 다음 단계
+- v0.2.5의 자동 설정은 실측값 기반 정책이지만 기기별 FPS 개선/발열 절감 정도를 확인한 것은 아님. 갤럭시/샤오미/아이폰에서 실기기 5–10분 QA 후 경계값 조정.
+- 다음 v0.2.6: 실제 기기 성능 로그 수집(개인정보 없는 프레임 지연/계측), 카메라 장시간 품질·발열, 위험 시 원본 복귀 페이드 연출, A/B 레퍼런스 UI를 검토.

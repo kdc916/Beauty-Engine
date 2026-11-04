@@ -1,14 +1,14 @@
-"""v0.2.0 non-GPU source and compatibility regression. Run: python tests_skin_quality.py"""
+"""v0.2.1 non-GPU source and compatibility regression. Run: python tests_skin_quality.py"""
 from pathlib import Path
 import re
 
 root=Path(__file__).resolve().parent
-script=(root/'main.v0.2.4.js').read_text()
+script=(root/'main.v0.2.5.js').read_text()
 html=(root/'index.html').read_text()
 css=(root/'styles.css').read_text()
 
-assert 'main.v0.2.4.js' in html and 'styles.css?v=0.2.4' in html
-assert 'v0.2.4' in html
+assert 'main.v0.2.5.js' in html and 'styles.css?v=0.2.5' in html
+assert 'v0.2.5' in html
 assert '.control-panel{height:100%' in css and 'overflow-y:auto' in css
 for key in ['skin','bright','glow','detail','underEye','highlight']:
     assert "['"+key+"'," in script, key

@@ -103,3 +103,10 @@
 .live-safe-badge{font-size:10px;letter-spacing:.03em;background:#244335;color:#bff5d3;border:1px solid #5b9c7a;padding:4px 7px;border-radius:8px;white-space:nowrap;}
 .live-safe-badge[hidden]{display:none}
 @media(max-width:460px){.live-safe-badge{font-size:8px;padding:3px 5px;letter-spacing:0}}
+
+/* v0.2.5: live quality stays in the independently scrolling control panel. */
+.live-quality{display:grid;grid-template-columns:minmax(0,1fr) minmax(135px,1fr);align-items:center;gap:10px;margin:0 0 15px;padding:11px 12px;background:#231c28;border:1px solid #ffffff24;border-radius:13px}
+.live-quality label{display:block;min-width:0}.live-quality strong{display:block;color:#f4c1d7;font-size:11px}.live-quality small{display:block;color:#a69aa9;font-size:9px;line-height:1.45;margin-top:4px}
+.live-quality select{background:#312635;color:#fff0f6;border:1px solid #a878986b;border-radius:9px;padding:10px 8px;font-size:11px;min-width:0;width:100%;cursor:pointer}
+.live-quality select:focus-visible{outline:2px solid #ffc0d8;outline-offset:2px}
+@media(max-width:370px){.live-quality{grid-template-columns:1fr}.live-quality select{width:100%}}

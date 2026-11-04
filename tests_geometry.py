@@ -1,11 +1,11 @@
 """v0.2.0 mesh warp structural regression. Runtime mesh math is tested by Node."""
 from pathlib import Path
 root=Path(__file__).parent
-code=(root/'main.v0.2.4.js').read_text()
+code=(root/'main.v0.2.5.js').read_text()
 html=(root/'index.html').read_text()
-mesh=(root/'mesh-warp.v0.2.4.mjs').read_text()
-assert 'src="./main.v0.2.4.js"' in html
-assert "from './mesh-warp.v0.2.4.mjs'" in code
+mesh=(root/'mesh-warp.v0.2.5.mjs').read_text()
+assert 'src="./main.v0.2.5.js"' in html
+assert "from './mesh-warp.v0.2.5.mjs'" in code
 assert 'in vec2 aSourceUv;' in code and 'in vec2 vMeshUv;' in code
 assert 'vec2 src=vMeshUv;' in code
 assert 'gl.drawElements(gl.TRIANGLES,faceMesh.indices.length,gl.UNSIGNED_SHORT,0)' in code
