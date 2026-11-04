@@ -1,5 +1,4 @@
 import {referenceWarpPoint} from './reference-match.v0.2.4.mjs';
-import {referenceWarpPoint} from './reference-match.v0.2.4.mjs';
 /* maxVFX Beauty Engine v0.2.4 — bounded triangular grid face mesh warp.
    Pure ES module, no browser dependencies, independently unit-testable.
    Positions and inverse source UVs are interpolated on GPU with one draw call.
