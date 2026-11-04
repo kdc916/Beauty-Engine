@@ -138,3 +138,11 @@ PC와 모바일 브라우저의 카메라에서 화사한 중국식 뷰티 필�
 
 ### 지속 QA
 - `.github/workflows/qa.yml`: main 푸시/PR마다 Node 22 JS 구문, Mesh Warp 동적 테스트, Python 3.11 회귀 6개 자동 실행하도록 설정. GitHub Actions 워크플로의 실제 첫 실행 성공 여부는 미확인.
+
+
+## v0.2.1 Reference Analysis (2026-11-04)
+- 신규: reference-panel.v0.2.1.mjs (두 이미지 입력·삭제·현재 프리뷰 캡처·독립 IMAGE 추론·세대 번호 검사·ObjectURL 정리).
+- 신규: reference-metrics.v0.2.1.mjs (IPD/roll 정규화, 8가지 얼굴 비율, 각도·표정 경고).
+- index.html/main.v0.2.1.js/styles.css: UI·모듈 연동; 기존 모바일 고정 프리뷰, Mesh Warp, 뷰티 기능 유지.
+- 신규 회귀: tests/reference-metrics.test.mjs, tests_reference_analysis.py.
+- 실제 모바일 MediaPipe/GPU·카메라 경로는 미검증. v0.2.2는 부위별 변형과 3면 비교.
