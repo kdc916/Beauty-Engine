@@ -55,3 +55,13 @@
 - LIMIT: Runner exposes neither WebGL1 nor WebGL2; only Canvas2D fallback path was exercised, not GPU shader compilation or masking.
 - LIMIT: Live MediaPipe CDN/model load & actual mobile camera performance remain unverified.
 - NEXT: Verify face mask with real Android Chrome and iOS Safari, including face turning and hairline.
+
+
+## v0.1.6 — 피부 품질 개선 (2026-11-04)
+- PASS: node --check main.v0.1.6.js (JavaScript 구문).
+- PASS: tests_geometry.py, tests_makeup.py, tests_mobile_layout.py, tests_reference_docs.py, tests_skin_mask.py, tests_skin_quality.py (정적 회귀).
+- PASS: 13개 랜드마크 uniform/CPU buffer 크기 일치 및 3개 신규 파라미터 GPU uniforms 연결.
+- PASS: 샘플 파일 WebP 확인, 기존 프리셋 복원 시 신규값의 프리셋별 기본값 초기화 코드 확인.
+- BLOCKED: Playwright/Chromium이 HTTP localhost 페이지에 접근 시 ERR_BLOCKED_BY_ADMINISTRATOR. 모바일 UI 시각 확인 및 실제 GPU 셰이더 컴파일을 이 환경에서는 검증할 수 없음.
+- NEEDS DEVICE QA: Android Chrome/Samsung Internet/iOS Safari에서 샘플·웹캠, 스무딩, 디테일, 눈 밑, 하이라이트, 5~10분 연속 FPS/발열 확인.
+- Performance note: 피부 스무딩 GPU 샘플링 횟수가 기존 8방향에서 2반경 16방향으로 증가하므로 모바일 성능 저하 가능.
