@@ -36,3 +36,12 @@
 - PASS: 새 warp 반경 밖의 샘플 좌표 불변성 / 4:5, 1:1, 16:9 수학 회귀 검사.
 - BLOCKED: Playwright의 로컬 WebGL 브라우저 실행은 ERR_BLOCKED_BY_ADMINISTRATOR 정책 차단으로 검증 불가.
 - NEEDS DEVICE QA: 실제 모바일에서 v0.1.2가 표시되는지 및 동일 사진의 전후 보정 비교선 정렬 확인.
+
+
+## v0.1.3 — 샘플과 화면 분할
+- PASS: `node --check main.v0.1.3.js`, `python tests_geometry.py`, `python tests_mobile_layout.py`.
+- PASS: Chromium `page.set_content` CSS 레이아웃 390×844, 360×667, 820×390, 1280×800. 390×844에서는 프리뷰 top=84px/bottom=411px, 컨트롤 top=438px/bottom=837px, 컨트롤 독립 스크롤, 페이지 전체 넘침 없음.
+- PASS: Chromium inline JS에서 샘플 자동 로딩, compare=true, 컨트롤 스크롤 중 프리뷰 위치 유지. WebGL2 미지원으로 Canvas2D fallback 실행.
+- PASS: 저장소 내장 이미지 WebP blob SHA `30e063c5c138d31c534a00a3febc3bcc84b03d84`.
+- BLOCKED: 외부/localhost 실제 페이지 네비게이션은 이 환경에서 ERR_BLOCKED_BY_ADMINISTRATOR.
+- NEEDS DEVICE QA: Android/iOS의 WebGL2 뷰티 셰이더, MediaPipe 다운로드·얼굴 탐지, 카메라 입력 및 장시간 성능.
