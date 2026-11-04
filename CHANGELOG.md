@@ -1,3 +1,12 @@
+## v0.1.6 (2026-11-04)
+- Added two-radius skin smoothing and micro-detail reconstruction.
+- Added local under-eye fill based on Face Landmarker positions 145 and 374.
+- Added highlight roll-off protection limited to skin mask.
+- Added new independent sliders to the existing mobile scrollable control panel.
+- Migrated older saved presets to appropriate per-preset defaults.
+- Preserved sample photo, fixed preview, face warp and makeup.
+- Static tests PASS; real WebGL2/mobile runtime validation pending (local browser blocked by policy).
+
 ## v0.1.5 (2026-11-04)
 - Lip contour / inner-mouth exclusion / feathered cheek masks via GPU makeup texture.
 - Motion-aware smoothing of face landmarks and masks.
