@@ -13,3 +13,11 @@
 
 ## v0.1.0 — 2026-11-04
 - Initial WebGL2/MediaPipe realtime beauty web MVP.
+
+
+## v0.1.3 (2026-11-04)
+- Added generated portrait as bundled sample WebP; automatic startup and split-view comparison.
+- Updated mobile viewport to persistent preview + separately scrolling controls (100dvh, stretch and 100% height).
+- Source selector: Sample / Camera / Photo. Landscape layout remains split horizontally.
+- Canvas2D fallback now composites the original left half during comparison.
+- Added browser layout/runtime verification and mobile layout regression tests.
