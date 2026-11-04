@@ -1,3 +1,11 @@
+## v0.2.4 (2026-11-04)
+- Fixed default jaw warp at silhouette/neck edge (also affects sample image without reference matching).
+- Camera Live Safe disables unverified jaw mesh morph, limits eye morph, and rejects lost/jumped facial landmarks.
+- Added UV edge stretch guard beyond foldovers; global attenuation and ultimate original-UV fallback.
+- Reused mesh UV work buffers to reduce frame allocations.
+- Integrated previously ZIP-only v0.2.3 Reference Match boundary safety.
+- Updated mobile badge, cache-busted script/styles, local/CI regression tests. GPU device QA still pending.
+
 ## v0.2.2 (2026-11-04)
 - Added bounded five-region Reference Match inverse mesh warp with IPD/roll normalization.
 - Added whole-face/eyes/nose/lips/jaw/brow sliders, enable toggle, own/reference/result triptych.
