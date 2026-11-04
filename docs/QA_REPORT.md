@@ -65,3 +65,11 @@
 - BLOCKED: Playwright/Chromium이 HTTP localhost 페이지에 접근 시 ERR_BLOCKED_BY_ADMINISTRATOR. 모바일 UI 시각 확인 및 실제 GPU 셰이더 컴파일을 이 환경에서는 검증할 수 없음.
 - NEEDS DEVICE QA: Android Chrome/Samsung Internet/iOS Safari에서 샘플·웹캠, 스무딩, 디테일, 눈 밑, 하이라이트, 5~10분 연속 FPS/발열 확인.
 - Performance note: 피부 스무딩 GPU 샘플링 횟수가 기존 8방향에서 2반경 16방향으로 증가하므로 모바일 성능 저하 가능.
+
+## v0.2.0 Face Mesh Warp QA — 2026-11-04
+- PASS `node --check main.v0.2.0.js`, `node --check mesh-warp.v0.2.0.mjs`
+- PASS `node --test tests/mesh-warp.test.mjs`: 4:5, 1:1, 16:9 × 미러 ON/OFF 6개 조합에서 0% 항등, 100% 변형, 배경 보존, 0 fold-over.
+- PASS 기존 Python 6개 정적 테스트: 이미지 번들, 비교 UI, 피부/메이크업 셰이더 연결, 모바일 고정 프리뷰, Reference Match 계획 스키마.
+- PERFORMANCE (Node CPU, 실제 모바일 아님): 샘플 4,161 정점 변형 갱신 평균 약 2.4ms, 테스트 시스템과 옵션에 따라 달라짐.
+- BLOCKED: 로컬 Chromium/Playwright 페이지 접근 `ERR_BLOCKED_BY_ADMINISTRATOR`. WebGL2 셰이더 실제 컴파일 및 기기별 프레임 성능 미검증.
+- 다음 수동 QA: 1) v0.2.0 표시 확인 2) 샘플 사진 3) 눈 크기/얼굴 라인 0↔100 4) 배경·머리카락 유지 5) 비교선 드래그 6) 카메라 전후 전환 7) 5분 연속 FPS/발열.
