@@ -105,7 +105,7 @@ void main(){
     vec2 ctr=vec2(mid.x,(uPoints[10].y+uPoints[3].y)*.50);
     skinMask=clamp(texture(uSkinMask,src).r,0.,1.);
     float er=max(.025,length(uPoints[1]-uPoints[0])*.20);
-    // Eyes, eyebrows and lips are excluded by the rasterized mask.
+    // Eyes, eyebrows and lips are already excluded from the rasterized face mask.
 
     vec2 mouth=(uPoints[6]+uPoints[7])*.5;
     vec2 mouthR=vec2(max(.01,length(uPoints[7]-uPoints[6])*.60),max(.016,length(uPoints[9]-uPoints[8])*.9));
@@ -142,6 +142,7 @@ void main(){
   color=mix(color,soft,skinMask*uGlow*.35);
   float gray=dot(color,vec3(.2126,.7152,.0722));
   color=mix(vec3(gray),color,clamp(.65+uSaturation*.7,.45,1.40));
+  // Optional localized QA overlay; only visible on the corrected side.
   if(uDebugMask>0.5 && uDetected>0.5){
     color=mix(color,vec3(.12,.94,.46),skinMask*.45);
   }
@@ -186,9 +187,11 @@ function rasterizeSkinMask(points){
   if(skinMaskCanvas.width!==w||skinMaskCanvas.height!==h){skinMaskCanvas.width=w;skinMaskCanvas.height=h;}
   const ctx=skinMaskCtx;
   ctx.clearRect(0,0,w,h);ctx.fillStyle='#000';ctx.fillRect(0,0,w,h);
+  // Blur softens only the skin boundary; no global full-image skin ellipse is used.
   ctx.save();ctx.filter='blur(1.6px)';ctx.fillStyle='#fff';ctx.beginPath();
   FACE_OVAL.forEach((i,n)=>{const p=points[i];if(n===0)ctx.moveTo(p.x*w,p.y*h);else ctx.lineTo(p.x*w,p.y*h);});
   ctx.closePath();ctx.fill();ctx.restore();
+  // Protect all four facial features with a slightly feathered exclusion.
   ctx.save();ctx.filter='blur(1.2px)';ctx.fillStyle='#000';
   maskHole(ctx,points,w,h,LEFT_EYE,1.30,1.62);
   maskHole(ctx,points,w,h,RIGHT_EYE,1.30,1.62);
