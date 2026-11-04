@@ -89,3 +89,12 @@
 - BLOCKED: Chromium localhost 접근이 ERR_BLOCKED_BY_ADMINISTRATOR로 차단되어 실제 GPU 셰이더·MediaPipe·모바일 UI 시각 QA 미실시.
 - DEVICE QA: Android Chrome, Samsung Internet, iOS Safari에서 두 이미지 독립 얼굴 분석 후 부위별 매칭, 원본 비교선, 3면 보기, 사진 교체·삭제, 5분 이상 카메라, 모델 실패 메시지 확인.
 - 의료 한계: 결과는 2D 이미지 시각화이며 실제 성형 결과를 예측하거나 보장하지 않음.
+
+
+## v0.2.4 — Live Safe / Jawline Regression
+- PASS: node --test tests/*.test.mjs: 16 tests, 0 failed (local Node 22).
+- PASS: python tests_*.py, JS node --check 5 runtime modules (local).
+- PASS: identity on missing contour/unsafe warp, UV stretch and foldover constraints, tracking sudden jump/dropout, 4:5/1:1/16:9 and mirror.
+- BLOCKED: Playwright Chromium cannot navigate to localhost or file URL (ERR_BLOCKED_BY_ADMINISTRATOR).
+- NOT VERIFIED: Android Chrome / Samsung Internet / iOS Safari GPU compile, MediaPipe camera tracking, 10 minute FPS/thermal, live jaw silhouette visual acceptance; GitHub Actions status independent verification.
+- LIVE POLICY: geometric jaw warp disabled in camera mode pending actual device validation. Still photos support limited contour-safe warp.
