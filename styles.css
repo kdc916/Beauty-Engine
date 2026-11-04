@@ -49,3 +49,8 @@
  .workspace{max-width:none;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
  .stage-top{flex-basis:18px}.stage-footer{flex-basis:15px}
 }
+/* v0.1.4 skin mask QA; preserve two-panel mobile layout */
+.mask-qa{display:flex;align-items:center;gap:12px;margin:8px 0 0;flex-wrap:wrap}
+.mask-qa button{flex:0 0 auto;padding:10px 12px}
+.mask-qa button.active{color:#c5f9d2;border-color:#47c97c;background:#183725}
+.mask-qa small{color:#8f8996;font-size:10px;flex:1 1 130px}
