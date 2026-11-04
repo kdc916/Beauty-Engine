@@ -73,3 +73,9 @@
 - PERFORMANCE (Node CPU, 실제 모바일 아님): 샘플 4,161 정점 변형 갱신 평균 약 2.4ms, 테스트 시스템과 옵션에 따라 달라짐.
 - BLOCKED: 로컬 Chromium/Playwright 페이지 접근 `ERR_BLOCKED_BY_ADMINISTRATOR`. WebGL2 셰이더 실제 컴파일 및 기기별 프레임 성능 미검증.
 - 다음 수동 QA: 1) v0.2.0 표시 확인 2) 샘플 사진 3) 눈 크기/얼굴 라인 0↔100 4) 배경·머리카락 유지 5) 비교선 드래그 6) 카메라 전후 전환 7) 5분 연속 FPS/발열.
+
+
+## v0.2.1 Reference Analysis QA
+- PASS: 2D 얼굴 좌표 수학 테스트(해상도/회전/입력 오류/동일 얼굴/경고), Python 정적 회귀와 Mesh Warp 테스트.
+- BLOCKED: Chromium localhost 브라우저 접근 ERR_BLOCKED_BY_ADMINISTRATOR로 실제 브라우저·GPU 확인 불가.
+- 실기기 TODO: Android/iOS 파일 업로드·촬영·face detector/CDN·0인/다인/교체·메모리 10분.
