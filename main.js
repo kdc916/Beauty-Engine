@@ -1,4 +1,4 @@
-/* maxVFX Beauty Engine v0.1.0 — original WebGL2 shader implementation.
+/* maxVFX Beauty Engine v0.1.1 — original WebGL2 shader implementation.
    MediaPipe Tasks Vision is loaded on demand; image data stays in browser. */
 'use strict';
 const $ = id => document.getElementById(id);
@@ -48,7 +48,7 @@ uniform float uSkin;uniform float uBright;uniform float uGlow;uniform float uWar
 vec3 readTex(vec2 p){return texture(uTex,vec2(clamp(p.x,0.001,0.999),clamp(p.y,0.001,0.999))).rgb;}
 float gauss(float x,float sig){return exp(-0.5*x*x/max(0.0001,sig*sig));}
 float ellipseMask(vec2 p,vec2 center,vec2 radii){vec2 d=(p-center)/max(radii,vec2(.001));return 1.0-smoothstep(.72,1.13,length(d));}
-vec2 mapEyes(vec2 p,vec2 c,float radius,float strength){vec2 d=p-c;d.x*=uSize.x/uSize.y;float r=length(d);float weight=pow(max(0.,1.-r/max(.0001,radius)),2.);return c+d*(1.-strength*weight);}
+vec2 mapEyes(vec2 p,vec2 c,float radius,float strength){vec2 d=p-c;vec2 metric=d;metric.x*=uSize.x/uSize.y;float r=length(metric);float weight=pow(max(0.,1.-r/max(.0001,radius)),2.);return c+d*(1.-strength*weight);}
 void main(){
   vec2 p=vec2(uMirror>0.5?1.-vUv.x:vUv.x,1.-vUv.y);
   vec3 original=readTex(p);
