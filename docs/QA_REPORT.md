@@ -79,3 +79,13 @@
 - PASS: 2D 얼굴 좌표 수학 테스트(해상도/회전/입력 오류/동일 얼굴/경고), Python 정적 회귀와 Mesh Warp 테스트.
 - BLOCKED: Chromium localhost 브라우저 접근 ERR_BLOCKED_BY_ADMINISTRATOR로 실제 브라우저·GPU 확인 불가.
 - 실기기 TODO: Android/iOS 파일 업로드·촬영·face detector/CDN·0인/다인/교체·메모리 10분.
+
+
+## v0.2.2 — Reference Match QA
+- PASS: Node 신규 Reference Match 순수 수학 검증(비활성/0% 항등, 동일 얼굴 원본, 5부위 국소 변화, 배경 보호, IPD 최대 변위, 독립 부위, 4:5/1:1/16:9/미러 foldover, 잘못된 얼굴 입력).
+- PASS: 기존 Mesh Warp 및 Reference Metrics Node 테스트, Python 정적 회귀 검사.
+- FIX: GPU mesh foldover fallback에서 source UV가 정점 위치를 덮어쓰던 기존 인덱싱 오류 수정.
+- PASS: JS 구문 검사 및 새 UI/모듈 참조/버전 확인.
+- BLOCKED: Chromium localhost 접근이 ERR_BLOCKED_BY_ADMINISTRATOR로 차단되어 실제 GPU 셰이더·MediaPipe·모바일 UI 시각 QA 미실시.
+- DEVICE QA: Android Chrome, Samsung Internet, iOS Safari에서 두 이미지 독립 얼굴 분석 후 부위별 매칭, 원본 비교선, 3면 보기, 사진 교체·삭제, 5분 이상 카메라, 모델 실패 메시지 확인.
+- 의료 한계: 결과는 2D 이미지 시각화이며 실제 성형 결과를 예측하거나 보장하지 않음.
