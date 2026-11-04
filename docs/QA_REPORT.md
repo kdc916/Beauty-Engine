@@ -23,8 +23,16 @@
 브라우저의 데스크톱 에뮬레이션은 실제 스마트폰 카메라, GPU, 카메라 권한 동작을 대체하지 못합니다.
 
 ## 이번 패키지에서 실제 수행한 확인
-- Node.js `node --check main.js`: PASS
+- Node.js `node --check main.v0.1.2.js`: PASS
 - HTML DOM 중복 ID 검사: PASS
 - 필수 리소스 존재 확인: PASS
 - Playwright Chromium 로컬 페이지 접근: **환경 보안 정책에서 차단됨** (`ERR_BLOCKED_BY_ADMINISTRATOR`). 화면 렌더·실제 WebGL 셰이더 컴파일 검증 불가.
 - 따라서 브라우저 구동과 실제 모바일 GPU 품질은 **PASS라고 주장하지 않음**.
+
+
+## v0.1.2 — 전역 가로 확대 회귀
+- PASS: JavaScript `node --check main.v0.1.2.js`
+- PASS: old-UV double aspect-scale 분석. 4:5 사진의 두 단계 샘플링이 0.8²를 만들어 화면을 약 1.56배 가로 확대.
+- PASS: 새 warp 반경 밖의 샘플 좌표 불변성 / 4:5, 1:1, 16:9 수학 회귀 검사.
+- BLOCKED: Playwright의 로컬 WebGL 브라우저 실행은 ERR_BLOCKED_BY_ADMINISTRATOR 정책 차단으로 검증 불가.
+- NEEDS DEVICE QA: 실제 모바일에서 v0.1.2가 표시되는지 및 동일 사진의 전후 보정 비교선 정렬 확인.
