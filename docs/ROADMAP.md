@@ -1,6 +1,6 @@
 # maxVFX Beauty Engine — 공식 로드맵 v1.1
 개정: 2026-11-04
-현재 앱: v0.1.5 (코드 변경 없음)
+현재 앱: v0.2.0 (Face Mesh Warp 1차 구현, 실제 모바일 GPU 검증 필요)
 
 ## 개발 원칙
 - Android/iOS/Windows/macOS 공통 뷰티 엔진을 지향한다.
@@ -42,3 +42,10 @@ P2: 상담용 3D 근사, 상담 보드, 리포트.
 - 설정 스키마: ../schemas/reference-match-config.schema.json
 - 참고: https://ai.google.dev/edge/api/mediapipe/python/mp/tasks/vision/FaceLandmarkerOptions
 - 참고: https://www.plasticsurgery.org/news/articles/the-ai-face-when-inspiration-photos-arent-real
+
+## v0.2.0 진행 기록 — 2026-11-04
+- GPU triangular grid inverse-UV Face Mesh Warp 기반을 새 모듈로 구현.
+- 현재 미형에 해당하는 눈 크기/얼굴 라인만 새로운 메시 경로로 연결. 코·입술 부위 메시 변형은 다음 세부 단계로 이월.
+- 0% 원본, 4:5/1:1/16:9, 카메라 미러 및 메시 fold-over 테스트 통과.
+- Android/iOS/PC 실제 WebGL2 렌더 QA, 얼굴/배경 합성 이음새에 대한 실기기 평가는 별도 진행 필요.
+- 다음 단계 v0.2.1: 참조 이미지 2장 업로드/독립 얼굴 분석 및 오류 처리.
