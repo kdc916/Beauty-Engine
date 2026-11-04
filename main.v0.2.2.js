@@ -285,7 +285,19 @@ function draw(t){if(!state.ready||!state.source)return;const src=state.source;if
     // 2D fallback must support the same before/after split even without WebGL2.
     if(state.compare && state.enabled){ctx.save();ctx.beginPath();ctx.rect(0,0,w*state.comparePosition,h);ctx.clip();if(state.mirror){ctx.translate(w,0);ctx.scale(-1,1);}ctx.filter='none';ctx.drawImage(src,0,0,w,h);ctx.restore();}
   }
-  if(referencePanel&&state.mode!=='camera')referencePanel.renderResultPreview(canvas);
+  if(referencePanel&&state.mode!=='camera'){
+    // The triptych's result must be fully corrected even while the main canvas shows a split comparison.
+    if(gl&&state.compare&&referencePanel.isTriptychOpen()){
+      try{
+        gl.uniform1f(uniforms.uCompare,0);
+        gl.drawElements(gl.TRIANGLES,faceMesh.indices.length,gl.UNSIGNED_SHORT,0);
+        referencePanel.renderResultPreview(glCanvas);
+      }finally{
+        gl.uniform1f(uniforms.uCompare,1);
+        gl.drawElements(gl.TRIANGLES,faceMesh.indices.length,gl.UNSIGNED_SHORT,0);
+      }
+    }else referencePanel.renderResultPreview(canvas);
+  }
   if(state.mode==='camera'&&state.tracker&&t-lastDetect>=100){lastDetect=t;updateFace(t);}
   frameCount++;if(state.mode==='camera'){if(t-lastMetric>=1200){state.fps=Math.round(frameCount*1000/Math.max(1,t-lastMetric));$('metrics').textContent=`${state.fps} fps · ${w}×${h}`;frameCount=0;lastMetric=t;}raf=requestAnimationFrame(draw);}else{$('metrics').textContent=`PHOTO · ${w}×${h}`;raf=0;}lastFrame=t;
 }
