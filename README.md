@@ -1,4 +1,4 @@
-# maxVFX Beauty Engine v0.2.0
+# maxVFX Beauty Engine v0.2.1
 
 실시간 카메라/이미지 기반 화사한 뷰티 필터 웹 MVP. **브라우저만으로 실행하는 정적 웹앱**이므로 GitHub Pages에 바로 업로드할 수 있습니다.
 
@@ -104,3 +104,11 @@ See [docs/HANDOFF.md](docs/HANDOFF.md) and [docs/QA_REPORT.md](docs/QA_REPORT.md
 - [설정 스키마](schemas/reference-match-config.schema.json) · [예시 프리셋](examples/reference-match-preset.json)
 - **현재 실행 버전은 v0.2.0이며 Reference Match와 상담 시뮬레이션은 아직 구현되지 않았습니다.**
 - 상담용 가상 이미지는 실제 수술 결과 예측이나 의학적 상담을 대체하지 않습니다.
+
+
+## v0.2.1 Reference Analysis
+- 내 사진/참고 인물 사진 업로드·삭제, 현재 프리뷰 사용, 8개 얼굴 비율 비교를 구현합니다.
+- 독립 MediaPipe IMAGE 얼굴 분석기로 얼굴 0명/2명 이상을 검사합니다.
+- IPD·회전 정규화 측정값은 2D 비율일 뿐, 신원·의학적 수술 결과 예측이 아닙니다.
+- 사진·좌표는 메모리에서만 사용하며 기존 모바일 고정 프리뷰와 뷰티·메시 기능은 유지합니다.
+- **닮은꼴 실시간 변형은 v0.2.2 목표로 아직 미구현입니다.**
