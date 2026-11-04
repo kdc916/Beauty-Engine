@@ -18,7 +18,7 @@ jobs:
       - name: JS syntax
         run: |
           node --check main.v0.2.0.js
-          node --check mesh-warp.v0.2.0.mjs
+          node --check mesh-warp.v0.2.2.mjs
       - name: Dynamic mesh geometry tests
         run: node --test tests/mesh-warp.test.mjs
       - name: Legacy feature regression checks
