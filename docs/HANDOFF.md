@@ -146,3 +146,24 @@ PC와 모바일 브라우저의 카메라에서 화사한 중국식 뷰티 필�
 - index.html/main.v0.2.1.js/styles.css: UI·모듈 연동; 기존 모바일 고정 프리뷰, Mesh Warp, 뷰티 기능 유지.
 - 신규 회귀: tests/reference-metrics.test.mjs, tests_reference_analysis.py.
 - 실제 모바일 MediaPipe/GPU·카메라 경로는 미검증. v0.2.2는 부위별 변형과 3면 비교.
+
+
+## v0.2.2 — Reference Match 1차 구현 (2026-11-04)
+### 실행 경로
+- index.html → main.v0.2.2.js (버전별 신규 JS로 모바일 캐시 무효화)
+- main.v0.2.2.js → reference-panel.v0.2.2.mjs, reference-match.v0.2.2.mjs, mesh-warp.v0.2.2.mjs
+- reference-panel은 기존 reference-metrics.v0.2.1.mjs 재사용
+### 구현
+- 사용자 얼굴과 참고 사진의 IMAGE 랜드마크를 IPD/roll 정규 좌표로 정렬. 5부위(눈/코/입술/턱/눈썹) 국소 역매핑을 메시 UV에 합성.
+- 부위별 강도/전체 강도, 비활성화 시 항등, 외곽 이외 원본 유지, IPD 8% 최대 변위(마케팅/의학 수치 아님).
+- 3면 비교(원본 사진/참고 사진/보정). 메인 전후 비교가 켜져 있어도 결과 카드는 전체 보정 프레임.
+- 내 사진 파일 업로드/현재 프리뷰 캡처 시 메인 프리뷰에도 같은 입력 적용, 외부 소스 전환 시 이전 매칭 source 무효화.
+- WebGL2 미지원 시 2D Reference Match 스위치 비활성화. 원본 사진/분석 좌표는 메모리에서만 보관.
+### 수정된 기존 오류
+- mesh-warp.v0.2.0.mjs의 foldover 감쇠/항등 복원 코드에서 `vertices[i*2+2]`로 정점 위치를 덮어쓰던 인덱싱 오류 수정. v0.2.2는 `vertices[v*4+2]`, `vertices[v*4+3]` 사용.
+### 검증 및 남은 리스크
+- Node 메시 정점/미러/종횡비/고유 영역/강도 제한 11 테스트, Python 정적 회귀 검사 수행.
+- 실제 Android/iOS WebGL2 / MediaPipe CDN 로딩 / 스마트폰 GPU 60fps / 밝기·색감 품질은 환경 정책으로 미검증.
+- 본 기능은 인물 스타일의 2D 가상 보정이며 특정 수술의 실제 결과를 예측하거나 보장하지 않습니다.
+### 다음 작업
+- v0.2.3: 다양한 표정·측면·촬영각도 테스트, reference A/B, 비교 패널 동기 확대, 모바일 GPU 성능 프로파일링.
