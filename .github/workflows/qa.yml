@@ -17,10 +17,13 @@ jobs:
           python-version: '3.11'
       - name: JS syntax
         run: |
-          node --check main.v0.2.0.js
+          node --check main.v0.2.2.js
+          node --check reference-metrics.v0.2.1.mjs
+          node --check reference-match.v0.2.2.mjs
+          node --check reference-panel.v0.2.2.mjs
           node --check mesh-warp.v0.2.2.mjs
       - name: Dynamic mesh geometry tests
-        run: node --test tests/mesh-warp.test.mjs
+        run: node --test tests/mesh-warp.test.mjs tests/reference-metrics.test.mjs tests/reference-match.test.mjs
       - name: Legacy feature regression checks
         run: |
           for file in tests_*.py; do python "$file"; done
