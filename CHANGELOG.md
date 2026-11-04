@@ -36,3 +36,9 @@
 - Source selector: Sample / Camera / Photo. Landscape layout remains split horizontally.
 - Canvas2D fallback now composites the original left half during comparison.
 - Added browser layout/runtime verification and mobile layout regression tests.
+
+
+## 2026-11-04: Roadmap v1.1 (documentation only)
+- Planned v0.2.1–v0.2.3 Reference Match and v0.3.1–v0.3.2 consultation visualization.
+- Added design, QA plan, reference-match JSON settings schema and smoke tests.
+- Runtime stays at v0.1.5. No surgery outcome prediction feature or clinical claims.
