@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {buildReferenceMatch,referenceWarpPoint} from '../reference-match.v0.2.2.mjs';
-import {createWarpGrid,updateWarpGrid,FACE_OUTLINE_IDS} from '../mesh-warp.v0.2.2.mjs';
+import {buildReferenceMatch,referenceWarpPoint} from '../reference-match.v0.2.4.mjs';
+import {createWarpGrid,updateWarpGrid,FACE_OUTLINE_IDS} from '../mesh-warp.v0.2.4.mjs';
 function face(modifier=0){
  const p=Array.from({length:478},()=>({x:.5,y:.52}));
  FACE_OUTLINE_IDS.forEach((id,i)=>{const a=2*Math.PI*i/FACE_OUTLINE_IDS.length-Math.PI/2;p[id]={x:.5+Math.cos(a)*.27,y:.5+Math.sin(a)*.38};});
