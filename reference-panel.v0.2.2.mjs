@@ -11,7 +11,7 @@ const MAX_BYTES=15*1024*1024;
 const $=id=>document.getElementById(id);
 const cap=(x,min,max)=>Math.max(min,Math.min(max,x));
 
-export function initReferencePanel({getCurrentSource,notify=()=>{},onAnalysisChange=()=>{},onConfigChange=()=>{},onSourceSelected=()=>{}}){
+export function initReferencePanel({getCurrentSource,notify=()=>{},onAnalysisChange=()=>{},onConfigChange=()=>{},onSourceSelected=()=>{},canWarp=()=>true}){
   const matchConfig={enabled:false,globalStrength:.50,regions:{eyes:.55,nose:.40,lips:.45,jaw:.55,brow:.40},maxDisplacementIPD:.08};
   const matchNames={globalStrength:'전체 유사도',eyes:'눈',nose:'코',lips:'입술',jaw:'얼굴형·턱',brow:'눈썹'};
   let triptychVisible=false;
@@ -35,10 +35,10 @@ export function initReferencePanel({getCurrentSource,notify=()=>{},onAnalysisCha
       analysis:store.reference.analysis,landmarks:store.reference.landmarks,width:store.reference.image.naturalWidth,height:store.reference.image.naturalHeight,image:store.reference.image
     }:null;
     const ready=!!own&&!!ref;
-    available=ready;
-    $('refMatchEnabled').disabled=!ready;
+    available=ready&&canWarp();
+    $('refMatchEnabled').disabled=!available;
     if(!ready){matchConfig.enabled=false;$('refMatchEnabled').checked=false;}
-    $('refMatchHint').textContent=ready?'분석 완료 · 전체/부위별 유사도를 조절할 수 있습니다.':'내 사진과 참고 인물 분석이 완료되면 사용할 수 있습니다.';
+    $('refMatchHint').textContent=!ready?'내 사진과 참고 인물 분석이 완료되면 사용할 수 있습니다.':available?'분석 완료 · 전체/부위별 유사도를 조절할 수 있습니다.':'얼굴 분석은 완료됐지만, 이 브라우저는 WebGL2 변형을 지원하지 않습니다.';
     $('refTriptychOwn').src=own?.image?.src||'';
     $('refTriptychReference').src=ref?.image?.src||'';
     syncInputs();onAnalysisChange({source:own,reference:ref});onConfigChange({...matchConfig,regions:{...matchConfig.regions}});
