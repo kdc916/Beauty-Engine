@@ -2,14 +2,14 @@
 from pathlib import Path
 r=Path(__file__).parent
 h=(r/'index.html').read_text()
-j=(r/'main.v0.2.2.js').read_text()
-p=(r/'reference-panel.v0.2.2.mjs').read_text()
+j=(r/'main.v0.2.4.js').read_text()
+p=(r/'reference-panel.v0.2.4.mjs').read_text()
 m=(r/'reference-metrics.v0.2.1.mjs').read_text()
 css=(r/'styles.css').read_text()
 for ident in ('refOwnInput','refTargetInput','refOwnStatus','refTargetStatus','refUsePreview','refComparison','refOwnPick','refTargetPick'):
     assert h.count('id="'+ident+'"')==1,ident
-assert 'src="./main.v0.2.2.js"' in h
-assert "from './reference-panel.v0.2.2.mjs'" in j
+assert 'src="./main.v0.2.4.js"' in h
+assert "from './reference-panel.v0.2.4.mjs'" in j
 assert 'initReferencePanel({' in j
 assert "from './reference-metrics.v0.2.1.mjs'" in p
 assert "numFaces:3" in p and "runningMode:'IMAGE'" in p
