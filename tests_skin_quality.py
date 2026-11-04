@@ -28,7 +28,7 @@ assert 'underMask*skinMask*protect' in script
 assert 'shoulder=smoothstep' in script and 'uHighlight*skinMask' in script
 assert 'if(uEnabled<0.5 || (uCompare>0.5 && vUv.x<uCompPos))' in script
 assert 'const STORAGE_KEY=\'maxvfx.beauty.v0.1.preferences\'' in script
-assert 'for(const key of Object.keys(PRESETS.douyin))' in script
+assert 'state.values={...PRESETS[state.preset]};for(const key of Object.keys(PRESETS.douyin))' in script
 sample=root/'assets/sample-portrait.webp'
 assert sample.is_file()
 assert sample.stat().st_size>3000
